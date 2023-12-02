@@ -1,9 +1,8 @@
-import Home from './screens/Home/Home';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { FavoritesScreen, Home } from './screens';
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <Home />
-    </SafeAreaProvider>);
+    <Home />
+    //<FavoritesScreen />
+  );
 }
