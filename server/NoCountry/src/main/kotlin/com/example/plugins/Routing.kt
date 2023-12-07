@@ -1,12 +1,13 @@
 package com.example.plugins
 
+import com.example.Database.Model
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 
-private var users = listOf(
-    "chris", "Roberto", "David"
-)
+
 
 fun Application.configureRouting() {
     routing {
@@ -18,5 +19,16 @@ fun Application.configureRouting() {
         get("/room") {
             call.respondText("Hello World!")
         }
+        route("/user") {
+            get {
+                call.respond(Model.UserTable)
+            }
+        }
     }
 }
+
+
+
+
+
+
