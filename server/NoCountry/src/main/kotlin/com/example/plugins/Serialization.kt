@@ -4,11 +4,12 @@ import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import kotlinx.serialization.json.Json
-import com.example.Database.Model
-import com.example.Database.Model.UserLoginTable.email
+import com.example.entity.*
 import com.example.dtos.services.ServicesRequest
 import com.example.dtos.roomType.RoomTypeRequest
 import com.example.dtos.roomType.RoomTypeResponse
+import com.example.entity.RoomType
+import com.example.entity.Services
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -34,7 +35,7 @@ fun Application.configureSerialization() {
         get("/json/test") {
             // Realiza la consulta a la base de datos
             val rows = transaction {
-                Model.RoomTypeTable.selectAll().map {
+                RoomType().selectAll().map {
                     // Convierte cada fila del resultado a una instancia de TestRow
                     /*
                                         TestRow(it[Model.RoomTypeTable.id], it[Model.RoomTypeTable.name])
@@ -54,7 +55,7 @@ fun Application.configureSerialization() {
 
             // Realiza la inserción en la base de datos
             transaction {
-                Model.ServiceTable.insert {
+                Services().insert {
                     it[name] = input.name
                 }
             }
@@ -76,7 +77,7 @@ fun Application.configureSerialization() {
             // Realiza la inserción en la base de datos
             transaction {
 
-                Model.UserTable.insert {
+                User().insert {
                     it[image] = input.image
                     it[name] = input.name
                     it[age] = input.age
@@ -86,7 +87,7 @@ fun Application.configureSerialization() {
                     it[budget] = input.budget
                     it[searchedArea] = input.searchedArea
                 }
-                Model.UserLoginTable.insert {
+                UserLogin().insert {
                     it[user] = input.user
                     it[email] = input.email
                     it[password] = input.password
@@ -101,8 +102,8 @@ fun Application.configureSerialization() {
             val input = call.receive<UserCredentials>()
 
             val user = transaction {
-                Model.UserLoginTable.select {
-                    (email eq input.email) and (Model.UserLoginTable.password eq input.password)
+                UserLogin().select {
+                    (UserLogin().email eq input.email) and (UserLogin().password eq input.password)
                 }.singleOrNull()
             }
 
@@ -124,7 +125,7 @@ fun Application.configureSerialization() {
             val input = call.receive<RoomTypeRequest>()
 
             transaction {
-                Model.RoomTypeTable.insert {
+                RoomType().insert {
                     it[name] = input.name
                 }
             }
@@ -134,11 +135,11 @@ fun Application.configureSerialization() {
 
         get("/roomtypes") {
             val roomtype = transaction {
-                Model.RoomTypeTable.selectAll().map {
+                RoomType().selectAll().map {
                     // Convierte cada fila del resultado a una instancia de TestRow
                     RoomTypeResponse(
-                        it[Model.RoomTypeTable.id],
-                        it[Model.RoomTypeTable.name]
+                        it[RoomType().id],
+                        it[RoomType().name]
                     )
                 }
             }.toList() // Convierte la ArrayList a una lista inmutable
