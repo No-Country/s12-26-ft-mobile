@@ -1,10 +1,14 @@
 package com.example.plugins
 
-import com.example.Database.Model
-import com.example.Database.Model.UserLoginTable.email
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
+import kotlinx.serialization.json.Json
+import com.example.Database.Model
+import com.example.Database.Model.UserLoginTable.email
+import com.example.dtos.services.ServicesRequest
+import com.example.dtos.roomType.RoomTypeRequest
+import com.example.dtos.roomType.RoomTypeResponse
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -17,8 +21,13 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.configureSerialization() {
     install(ContentNegotiation) {
-        json()
+        json(Json {
+            prettyPrint = true
+            isLenient = true
+        })
     }
+
+
     routing {
 
 
@@ -39,34 +48,13 @@ fun Application.configureSerialization() {
 
 
 
-
-
-        post("/json/insert") {
-            // Deserializa el cuerpo de la petición a una instancia de TestRowInput
-            val input = call.receive<RoomType>()
-
-            // Realiza la inserción en la base de datos
-            transaction {
-                Model.RoomTypeTable.insert {
-                    it[id] = input.id
-                    it[name] = input.name
-                }
-            }
-
-            // Envía una respuesta para indicar que la operación fue exitosa
-            call.respond(mapOf("status" to "success"))
-        }
-
-
-
         post("/insertServiceTable") {
             // Deserializa el cuerpo de la petición a una instancia de TestRowInput
-            val input = call.receive<Service>()
+            val input = call.receive<ServicesRequest>()
 
             // Realiza la inserción en la base de datos
             transaction {
                 Model.ServiceTable.insert {
-                    it[id] = input.id
                     it[name] = input.name
                 }
             }
@@ -148,7 +136,10 @@ fun Application.configureSerialization() {
             val roomtype = transaction {
                 Model.RoomTypeTable.selectAll().map {
                     // Convierte cada fila del resultado a una instancia de TestRow
-                    RoomType(it[Model.RoomTypeTable.id], it[Model.RoomTypeTable.name])
+                    RoomTypeResponse(
+                        it[Model.RoomTypeTable.id],
+                        it[Model.RoomTypeTable.name]
+                    )
                 }
             }.toList() // Convierte la ArrayList a una lista inmutable
             call.respond(roomtype)
