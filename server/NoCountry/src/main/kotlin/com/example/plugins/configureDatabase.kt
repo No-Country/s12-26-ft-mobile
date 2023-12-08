@@ -1,6 +1,5 @@
 package com.example.plugins
 
-import com.example.Database.Model
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -17,6 +16,7 @@ fun Application.configureDatabase() {
 
     transaction {
         // Crea la tabla en la base de datos
+        /*
         SchemaUtils.create(
             Model.UserTable,
             Model.RoomTable,
@@ -26,8 +26,9 @@ fun Application.configureDatabase() {
             Model.RoomServiceTable,
             Model.UserRoomTable,
             Model.UserLoginTable
-
         )
+
+         */
     }
 
 
