@@ -1,43 +1,53 @@
 package com.example.plugins
 
+
+import com.example.entity.*
+import com.zaxxer.hikari.HikariConfig
+import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.application.*
-import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
-import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.transactions.transaction
 
-// Define el objeto que representa la tabla
-object TestTable : Table() {
-    val id = integer("id").autoIncrement()
-    val name = varchar("name", length = 50)
-    override val primaryKey = PrimaryKey(id, name = "PK_TestTable_Id")
-
-}
-
-@Serializable
-data class TestRow(val id: Int, val name: String)
-
-@Serializable
-data class TestRowInput(val name: String)
 fun Application.configureDatabase() {
-    Database.connect(
-        url = "jdbc:mysql://localhost:3306/test",
-        driver = "com.mysql.cj.jdbc.Driver",
-        user = "root",
-        password = "root"
+    val databaseName = "test"
+    val instanceConnectionName = "ktor-project-407503:us-central1:test"
+    val user = "ryzer"
+    val password = "David1091."
+    var jdbcUrl = String.format(
+        "jdbc:mysql://google/%s?cloudSqlInstance=%s&socketFactory=com.google.cloud.sql.mysql.SocketFactory&user=%s&password=%s&useSSL=false",
+        databaseName,
+        instanceConnectionName,
+        user,
+        password
     )
 
-    transaction {
-        // Crea la tabla en la base de datos
-        SchemaUtils.create(TestTable)
+    val config = HikariConfig().apply {
+        driverClassName = "com.mysql.cj.jdbc.Driver"
+        this.jdbcUrl = jdbcUrl
+        maximumPoolSize = 3
+        isAutoCommit = false
+        transactionIsolation = "TRANSACTION_REPEATABLE_READ"
+        validate()
     }
+
+    val dataSource = HikariDataSource(config)
+
+    Database.connect(dataSource)
+
+
     transaction {
-        exec("SHOW TABLES") { rs ->
-            val tableNames = generateSequence {
-                if (rs.next()) rs.getString(1) else null
-            }.toList()
-            println("Tables in the database: $tableNames")
-        }
+        // Create the table in the database
+        SchemaUtils.create(
+            UserTable,
+            RoomTable,
+            ServicesTable,
+            FavoriteTable,
+            RoomServiceTable,
+            UserLoginTable,
+            UserRoomTable
+            // Add other tables here...
+        )
     }
 }
+
