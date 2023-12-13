@@ -1,9 +1,9 @@
 package com.example.entity
 
+import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Table
 
-object UserTable : Table() {
-    val id = integer("id").autoIncrement()
+object UserTable : IntIdTable() {
     val image = varchar("image", 150)
     val name = varchar("name", 150)
     val age = integer("age")

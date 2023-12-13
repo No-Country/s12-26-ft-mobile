@@ -13,5 +13,6 @@ data class RoomRequest(
     val sizeM2: Double,
     val isPet: Boolean,
     val isSmokers: Boolean,
-    val room: Int
+    val room: Int,
+    val userId: Int
 )

@@ -1,11 +1,8 @@
 package com.example.entity
 
-import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.dao.id.IntIdTable
 
-object ServicesTable : Table() {
-    val id = integer("id")
-        .autoIncrement()
-        .uniqueIndex()
+object ServicesTable : IntIdTable() {
     val name = varchar("name", 150)
     override val primaryKey = PrimaryKey(id, name = "PK_ServiceTable_Id")
 }

@@ -1,12 +1,10 @@
 package com.example.plugins
 
-import com.example.dtos.roomType.RoomTypeRequest
+import com.example.dtos.room.RoomRequest
+import com.example.dtos.room.RoomResponse
 import com.example.dtos.roomType.RoomTypeResponse
 import com.example.dtos.services.ServicesRequest
-import com.example.entity.RoomTypeTable
-import com.example.entity.ServicesTable
-import com.example.entity.UserLoginTable
-import com.example.entity.UserTable
+import com.example.entity.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -14,11 +12,9 @@ import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
-import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.select
-import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.transactions.transaction
 
 
@@ -32,7 +28,6 @@ fun Application.configureSerialization() {
 
 
     routing {
-
 
 
         post("/insertServiceTable") {
@@ -63,7 +58,6 @@ fun Application.configureSerialization() {
         post("/insertNewUserTable") {
             try {
                 val content = call.receiveText()
-                application.log.info("Received content: $content")
 
                 val input = Json.decodeFromString<InsertUserLogin>(content)
 
@@ -95,7 +89,7 @@ fun Application.configureSerialization() {
             }
         }
 
-        post("/user") {
+        post("/getUser") {
             val input = call.receive<UserCredentials>()
 
             val user = transaction {
@@ -118,33 +112,14 @@ fun Application.configureSerialization() {
 
         */
 
-        post("/newInsertRoomtype") {
-            try {
-                val input = call.receive<RoomTypeRequest>()
 
-                transaction {
-                    RoomTypeTable.insert {
-                        it[name] = input.name
-                    }
-                }
-                call.respond(mapOf("Status" to "Success"))
-            } catch (e: Exception) {
-                // Log the exception
-                application.log.error("Error handling /newInsertRoomtype request", e)
-                // Respond with a 500 status code and a message
-                call.respond(
-                    HttpStatusCode.InternalServerError,
-                    mapOf("Status" to "Failure", "Message" to e.localizedMessage)
-                )
-            }
-        }
 
-        get("/roomtypes") {
+        get("/getRoomTypes") {
             try {
                 val roomtype = transaction {
                     RoomTypeTable.selectAll().map {
                         RoomTypeResponse(
-                            it[RoomTypeTable.id],
+                            it[RoomTypeTable.id].value,
                             it[RoomTypeTable.name]
                         )
                     }
@@ -158,7 +133,89 @@ fun Application.configureSerialization() {
             }
         }
 
+        get("/getRoom") {
+            try {
+                val room = transaction {
+                    RoomTable.selectAll().map {
+                        RoomResponse(
+                            it[RoomTable.id].value,
+                            it[RoomTable.image],
+                            it[RoomTable.title],
+                            it[RoomTable.city],
+                            it[RoomTable.district],
+                            it[RoomTable.province],
+                            it[RoomTable.monthPrice],
+                            it[RoomTable.sizeM2],
+                            it[RoomTable.isPet],
+                            it[RoomTable.isSmokers],
+                            it[RoomTable.room]
+                        )
+                    }
+                }.toList()
+                call.respond(room)
+            } catch (e: Exception) {
+                // Log the exception
+                application.log.error("Error handling /roomtypes request", e)
+                // Respond with a 500 status code
+                call.respond(HttpStatusCode.InternalServerError)
+            }
+        }
 
+
+// ...
+
+        post("/InsertRoom") {
+            launch {
+                try {
+                    val input = call.receive<RoomRequest>()
+
+                    transaction {
+                        // Check if the room type exists in the RoomType table
+                        val roomTypeExists = RoomTypeTable.select {
+                            RoomTypeTable.id eq input.room
+                        }.singleOrNull() != null
+
+                        if (roomTypeExists) {
+                            // If the room type exists, proceed with the insert operation
+                            val roomId = RoomTable.insertAndGetId {
+                                it[image] = input.image
+                                it[title] = input.title
+                                it[city] = input.city
+                                it[district] = input.district
+                                it[province] = input.province
+                                it[monthPrice] = input.monthPrice
+                                it[sizeM2] = input.sizeM2
+                                it[isPet] = input.isPet
+                                it[isSmokers] = input.isSmokers
+                                it[room] = input.room
+                            }.value
+
+                            UserRoomTable.insert {
+                                it[user] = input.userId
+                                it[room] = roomId
+                            }
+                            launch { call.respond(mapOf("Status" to "Success")) }
+                        } else {
+                            // If the room type does not exist, respond with an error message
+                            launch {
+                                call.respond(
+                                    HttpStatusCode.BadRequest,
+                                    mapOf("Status" to "Failure", "Message" to "Room type does not exist")
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Log the exception
+                    application.log.error("Error handling /InsertUserRoom request", e)
+                    // Respond with a 500 status code and a message
+                    call.respond(
+                        HttpStatusCode.InternalServerError,
+                        mapOf("Status" to "Failure", "Message" to e.localizedMessage)
+                    )
+                }
+            }
+        }
     }
-
 }
+

@@ -1,10 +1,9 @@
 package com.example.entity
 
+import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
-object RoomTable : Table() {
-    val id = integer("id")
-        .autoIncrement()
+object RoomTable : IntIdTable() {
     val image = varchar("image", 150)
     val title = varchar("title", 150)
     val city = varchar("city", 150)
