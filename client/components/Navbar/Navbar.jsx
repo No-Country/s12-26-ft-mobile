@@ -3,6 +3,8 @@ import { BottomNavigation, Text } from 'react-native-paper';
 import { routes as navbarRoutes } from '../../utils/routesUtils';
 import { View, StyleSheet } from 'react-native';
 
+import Profile from '../Profile';
+
 const Navbar = () => {
   const [index, setIndex] = useState(0);
   const [routes] = useState(navbarRoutes);
@@ -11,7 +13,7 @@ const Navbar = () => {
 
   const Guardados = () => <Text>guardados</Text>;
 
-  const Perfil = () => <Text>Perfil</Text>;
+  const Perfil = () => <Profile />;
 
   const renderScene = BottomNavigation.SceneMap({
     buscar: Buscar,
@@ -24,8 +26,7 @@ const Navbar = () => {
       flex: 1,
     },
     barStyle: {
-      backgroundColor: 'white',
-      borderTop: 'lightGray 3px solid'
+      backgroundColor: '#F3EDF7',
     }
   });
 
@@ -36,8 +37,8 @@ const Navbar = () => {
         onIndexChange={setIndex}
         renderScene={renderScene}
         labeled={false}
-        barStyle={{ backgroundColor: 'white', borderTop: 'lightGray 3px solid'}}
-        theme={{colors: {secondaryContainer: 'white'}}}
+        barStyle={styles.barStyle}
+        theme={{colors: {secondaryContainer: '#FFD9DD'}}}
       />
     </View>
   );
