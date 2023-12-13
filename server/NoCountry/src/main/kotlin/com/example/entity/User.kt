@@ -2,7 +2,7 @@ package com.example.entity
 
 import org.jetbrains.exposed.sql.Table
 
-class User : Table() {
+object UserTable : Table() {
     val id = integer("id").autoIncrement()
     val image = varchar("image", 150)
     val name = varchar("name", 150)

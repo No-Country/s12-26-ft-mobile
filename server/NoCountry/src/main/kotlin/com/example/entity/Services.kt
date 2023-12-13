@@ -2,7 +2,7 @@ package com.example.entity
 
 import org.jetbrains.exposed.sql.Table
 
-class Services : Table() {
+object ServicesTable : Table() {
     val id = integer("id")
         .autoIncrement()
         .uniqueIndex()

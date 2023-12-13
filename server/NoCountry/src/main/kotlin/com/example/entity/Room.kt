@@ -2,7 +2,7 @@ package com.example.entity
 
 import org.jetbrains.exposed.sql.ReferenceOption
 import org.jetbrains.exposed.sql.Table
-class Room : Table() {
+object RoomTable : Table() {
     val id = integer("id")
         .autoIncrement()
     val image = varchar("image", 150)
@@ -14,6 +14,6 @@ class Room : Table() {
     val sizeM2 = double("size_m2")
     val isPet = bool("is_pet")
     val isSmokers = bool("is_smokers")
-    val room = integer("room").references(RoomType().id, onDelete = ReferenceOption.CASCADE)
+    val room = integer("room").references(RoomTypeTable.id, onDelete = ReferenceOption.CASCADE)
     override val primaryKey = PrimaryKey(id, name = "PK_RoomTable_Id")
 }

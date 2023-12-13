@@ -2,7 +2,7 @@ package com.example.entity
 
 import org.jetbrains.exposed.sql.Table
 
-class RoomType : Table() {
+object RoomTypeTable : Table() {
     val id = integer("id")
         .autoIncrement()
         .uniqueIndex()
