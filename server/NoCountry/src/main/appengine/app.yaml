@@ -1,6 +1,6 @@
 #More detail regarding the app.yaml can be found here:
 #https://cloud.google.com/appengine/docs/standard/java11/config/appref
 runtime: java11
-#Para hacer deploy se debe hacer estos comandos  consecutivamente
+#Para hacer deploy se debe hacer estos coma1ndos  consecutivamente
   #./gradlew clean shadowJar,
 #./gradlew appengineDeploy
