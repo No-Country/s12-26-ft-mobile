@@ -23,8 +23,22 @@ const loginSchema = Yup.object().shape({
 
 export default function Login() {
   async function handleSubmit({ email, password }) {
-    console.log(email);
-    console.log(password);
+    try {
+      const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/validateUser`, {
+        method: "POST",
+        headers: {
+          'Content-Type' : 'application/json'
+        },
+        body: JSON.stringify({
+          email,
+          password
+        })
+      }).then(res => res.json())
+  
+      console.log("Estado del Login: "+res.status); 
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   return (
@@ -145,7 +159,7 @@ export default function Login() {
               }
               disabled={isSubmitting}
             >
-              <Text style={styles.submitContent}>Acceder</Text>
+              <Text style={styles.submitContent}>{isSubmitting? "Cargando.." : "Acceder"}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity>
