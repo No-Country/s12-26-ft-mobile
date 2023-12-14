@@ -73,7 +73,6 @@ data class UserLogin(
 
 @Serializable
 data class InsertUserLogin(
-    val user: Int,
     val email: String,
     val password: String,
     val image: String,
@@ -86,10 +85,6 @@ data class InsertUserLogin(
     val searchedArea: String
 )
 
-@Serializable
-data class RoomTypeRequest(
-    val name: String
-)
 
 
 @Serializable

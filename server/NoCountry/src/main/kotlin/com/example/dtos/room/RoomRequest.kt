@@ -16,3 +16,13 @@ data class RoomRequest(
     val room: Int,
     val userId: Int
 )
+
+
+@Serializable
+data class RoomIdRequest(val id: Int)
+
+
+@Serializable
+data class RoomFilterRequest(
+    val title: String? = null,
+)

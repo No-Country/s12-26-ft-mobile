@@ -1,5 +1,9 @@
 package com.example.plugins
 
+import com.example.dtos.favorite.FavoriteByUserRequest
+import com.example.dtos.favorite.FavoriteRequest
+import com.example.dtos.room.RoomFilterRequest
+import com.example.dtos.room.RoomIdRequest
 import com.example.dtos.room.RoomRequest
 import com.example.dtos.room.RoomResponse
 import com.example.dtos.roomType.RoomTypeResponse
@@ -63,7 +67,7 @@ fun Application.configureSerialization() {
 
 
                 transaction {
-                    UserTable.insert {
+                    val userId = UserTable.insertAndGetId {
                         it[image] = input.image
                         it[name] = input.name
                         it[age] = input.age
@@ -72,9 +76,10 @@ fun Application.configureSerialization() {
                         it[isVerify] = input.isVerify
                         it[budget] = input.budget
                         it[searchedArea] = input.searchedArea
-                    }
+                    }.value
+
                     UserLoginTable.insert {
-                        it[user] = input.user
+                        it[user] = userId
                         it[email] = input.email
                         it[password] = input.password
                     }
@@ -89,7 +94,7 @@ fun Application.configureSerialization() {
             }
         }
 
-        post("/getUser") {
+        post("/validateUser") {
             val input = call.receive<UserCredentials>()
 
             val user = transaction {
@@ -111,9 +116,6 @@ fun Application.configureSerialization() {
         ROOMTYPE
 
         */
-
-
-
         get("/getRoomTypes") {
             try {
                 val roomtype = transaction {
@@ -148,7 +150,7 @@ fun Application.configureSerialization() {
                             it[RoomTable.sizeM2],
                             it[RoomTable.isPet],
                             it[RoomTable.isSmokers],
-                            it[RoomTable.room]
+                            it[RoomTable.room_type],
                         )
                     }
                 }.toList()
@@ -187,7 +189,7 @@ fun Application.configureSerialization() {
                                 it[sizeM2] = input.sizeM2
                                 it[isPet] = input.isPet
                                 it[isSmokers] = input.isSmokers
-                                it[room] = input.room
+                                it[room_type] = input.room
                             }.value
 
                             UserRoomTable.insert {
@@ -216,6 +218,192 @@ fun Application.configureSerialization() {
                 }
             }
         }
+
+        post("/insertFavorite") {
+            launch {
+                try {
+                    val input = call.receive<FavoriteRequest>()
+
+                    transaction {
+                        // Check if the room type exists in the RoomType table
+                        val roomExist = RoomTable.select {
+                            RoomTable.id eq input.room
+                        }.singleOrNull() != null
+                        val userExist = UserTable.select {
+                            UserTable.id eq input.user
+                        }.singleOrNull() != null
+
+                        if (roomExist && userExist) {
+                            // If the room type exists, proceed with the insert operation
+                            FavoriteTable.insert {
+                                it[user] = input.user
+                                it[room] = input.room
+                            }
+                            launch { call.respond(mapOf("Status" to "Success")) }
+                        } else {
+                            // If the room type does not exist, respond with an error message
+                            launch {
+                                call.respond(
+                                    HttpStatusCode.BadRequest,
+                                    mapOf("Status" to "Failure", "Message" to "Room or user does not exist")
+                                )
+                            }
+                        }
+
+                    }
+                } catch (e: Exception) {
+                    // Log the exception
+                    application.log.error("Error handling /insertFavorite request", e)
+                    // Respond with a 500 status code and a message
+                    call.respond(
+                        HttpStatusCode.InternalServerError,
+                        mapOf("Status" to "Failure", "Message" to e.localizedMessage)
+                    )
+                }
+            }
+        }
+
+
+        post("/getFavoriteByUser") {
+            launch {
+                try {
+                    val input = call.receive<FavoriteByUserRequest>()
+
+                    transaction {
+
+                        val userExist = UserTable.select {
+                            UserTable.id eq input.user
+                        }.singleOrNull() != null
+
+                        if (userExist) {
+                            // If the user exists, proceed with the select operation
+                            val favorites = FavoriteTable.select {
+                                FavoriteTable.user eq input.user
+                            }
+
+                            val rooms = RoomTable.select {
+                                RoomTable.id inList favorites.map { it[FavoriteTable.room] }
+                            }.map {
+                                RoomResponse(
+                                    it[RoomTable.id].value,
+                                    it[RoomTable.image],
+                                    it[RoomTable.title],
+                                    it[RoomTable.city],
+                                    it[RoomTable.district],
+                                    it[RoomTable.province],
+                                    it[RoomTable.monthPrice],
+                                    it[RoomTable.sizeM2],
+                                    it[RoomTable.isPet],
+                                    it[RoomTable.isSmokers],
+                                    it[RoomTable.room_type]
+                                )
+                            }.toList()
+
+                            launch { call.respond(rooms) }
+                        } else {
+                            // If the user does not exist, respond with an error message
+                            launch {
+                                call.respond(
+                                    HttpStatusCode.BadRequest,
+                                    mapOf("Status" to "Failure", "Message" to "User does not exist")
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Log the exception
+                    application.log.error("Error handling /getFavoriteByUser request", e)
+                    // Respond with a 500 status code and a message
+                    call.respond(
+                        HttpStatusCode.InternalServerError,
+                        mapOf("Status" to "Failure", "Message" to e.localizedMessage)
+                    )
+                }
+            }
+        }
+
+        post("/getRoomById") {
+            try {
+                val input = call.receive<RoomIdRequest>()
+                val roomId = input.id
+                val room = transaction {
+                    RoomTable.select { RoomTable.id eq roomId }.map {
+                        RoomResponse(
+                            it[RoomTable.id].value,
+                            it[RoomTable.image],
+                            it[RoomTable.title],
+                            it[RoomTable.city],
+                            it[RoomTable.district],
+                            it[RoomTable.province],
+                            it[RoomTable.monthPrice],
+                            it[RoomTable.sizeM2],
+                            it[RoomTable.isPet],
+                            it[RoomTable.isSmokers],
+                            it[RoomTable.room_type],
+                        )
+                    }.toList()
+                }
+                if (room.isNotEmpty()) {
+                    call.respond(room)
+                } else {
+                    call.respond(HttpStatusCode.NotFound, "Room not found")
+                }
+            } catch (e: Exception) {
+                // Log the exception
+                application.log.error("Error handling /getRoom request", e)
+                // Respond with a 500 status code
+                call.respond(HttpStatusCode.InternalServerError)
+            }
+        }
+
+
+        post("/getRoomFilter") {
+            try {
+                val input = call.receive<RoomFilterRequest>()
+                val room = transaction {
+                    val query = RoomTable.selectAll()
+
+                    input.title?.let {
+                        query.orWhere { RoomTable.title eq it }
+                    }
+
+                    input.title?.let {
+                        query.orWhere { RoomTable.city eq it }
+                    }
+
+                    input.title?.let {
+                        query.orWhere { RoomTable.district eq it }
+                    }
+
+                    query.map {
+                        RoomResponse(
+                            it[RoomTable.id].value,
+                            it[RoomTable.image],
+                            it[RoomTable.title],
+                            it[RoomTable.city],
+                            it[RoomTable.district],
+                            it[RoomTable.province],
+                            it[RoomTable.monthPrice],
+                            it[RoomTable.sizeM2],
+                            it[RoomTable.isPet],
+                            it[RoomTable.isSmokers],
+                            it[RoomTable.room_type],
+                        )
+                    }.toList()
+                }
+                if (room.isNotEmpty()) {
+                    call.respond(room)
+                } else {
+                    call.respond(HttpStatusCode.NotFound, "Room not found")
+                }
+            } catch (e: Exception) {
+                // Log the exception
+                application.log.error("Error handling /getRoom request", e)
+                // Respond with a 500 status code
+                call.respond(HttpStatusCode.InternalServerError)
+            }
+        }
+
     }
 }
 

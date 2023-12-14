@@ -13,6 +13,6 @@ object RoomTable : IntIdTable() {
     val sizeM2 = double("size_m2")
     val isPet = bool("is_pet")
     val isSmokers = bool("is_smokers")
-    val room = integer("room").references(RoomTypeTable.id, onDelete = ReferenceOption.CASCADE)
+    val room_type = integer("room_type").references(RoomTypeTable.id, onDelete = ReferenceOption.CASCADE)
     override val primaryKey = PrimaryKey(id, name = "PK_RoomTable_Id")
 }
