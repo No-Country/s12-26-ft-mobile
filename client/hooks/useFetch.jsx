@@ -23,7 +23,7 @@ const useFetch = () => {
           'Content-Type': 'application/json',
         },
       });
-
+      
       return response.data;
     } catch (error) {
       setError(error);
