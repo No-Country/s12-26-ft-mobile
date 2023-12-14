@@ -4,7 +4,7 @@ import { routes as navbarRoutes } from '../../utils/routesUtils';
 import { View, StyleSheet } from 'react-native';
 
 import Profile from '../Profile';
-import { Home } from '../../screens';
+import Home from '../../screens/Home/Home';
 
 const Navbar = () => {
   const [index, setIndex] = useState(0);

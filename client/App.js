@@ -1,11 +1,15 @@
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { FavoritesScreen, Home } from './screens';
-import Home2 from './screens/Home/Home';
+import { View, SafeAreaView } from 'react-native';
+import Navbar from './components/Navbar/Navbar';
 
 export default function App() {
   return (
     <SafeAreaProvider>
-      <Home />
+      <SafeAreaView style={{ flex: 1 }}>
+        <View style={{ flex: 1 }}>
+          <Navbar />
+        </View>
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }
