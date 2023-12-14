@@ -11,6 +11,7 @@ import { AppLogoWide } from "../../components/Icons/IconsView";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./login.styles";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import useFetch from "../../hooks/useFetch";
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -21,23 +22,21 @@ const loginSchema = Yup.object().shape({
     .required("Por favor ingresa una contraseña"),
 });
 
-export default function Login() {
+export default function Login({navigation}) {
+  const { fetchData } = useFetch();
+
   async function handleSubmit({ email, password }) {
-    try {
-      const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/validateUser`, {
-        method: "POST",
-        headers: {
-          'Content-Type' : 'application/json'
-        },
-        body: JSON.stringify({
-          email,
-          password
-        })
-      }).then(res => res.json())
-  
-      console.log("Estado del Login: "+res.status); 
-    } catch (error) {
-      console.error(error);
+    const res = await fetchData('/validateUser', 'POST', {
+      email,
+      password
+    })
+    
+    console.log("Estado del Login: "+res.status);
+    if (res.status === 'success') {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Navbar' }],
+      });
     }
   }
 
@@ -168,7 +167,13 @@ export default function Login() {
           </View>
         )}
       </Formik>
-      <TouchableOpacity style={styles.outlinedButton}>
+      <TouchableOpacity
+        style={styles.outlinedButton}
+        onPress={() => navigation.reset({
+          index: 0,
+          routes: [{ name: 'Register' }],
+        })}
+      >
         <Text style={styles.textMainColour}>Registrarse</Text>
       </TouchableOpacity>
     </ScrollView>

@@ -10,6 +10,7 @@ import * as Yup from "yup";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { styles } from "./register.styles";
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import useFetch from "../../hooks/useFetch";
 
 
 const registerSchema = Yup.object().shape({
@@ -26,32 +27,24 @@ const registerSchema = Yup.object().shape({
     .required("Por favor ingresa una contraseña"),
 });
 
-export default function Register() {
+export default function Register({navigation}) {
+  const { fetchData } = useFetch();
+
   async function handleSubmit({ email, phone, password }) {
-    try {
-      const res = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/insertNewUserTable`, {
-        method: "POST",
-        headers: {
-          'Content-Type' : 'application/json'
-        },
-        body: JSON.stringify({
-          email,
-          password,
-          image: "",
-          name: email,
-          age: 17,
-          location: "Worldwide",
-          biography: "una bio",
-          isVerify: true,
-          budget: 100000,
-          searchedArea: "No Where"
-        })
-      }).then(res => res.json())
-  
-      console.log("Estado del Registro: "+res); 
-    } catch (error) {
-      console.error(error);
-    }
+    const res = await fetchData('/insertNewUserTable', 'POST', {
+      email,
+      password,
+      image: "",
+      name: email,
+      age: 17,
+      location: "Worldwide",
+      biography: "una bio",
+      isVerify: true,
+      budget: 100000,
+      searchedArea: "No Where"
+    })
+    
+    console.log("Estado del Registro: "+JSON.stringify(res));
   }
 
   return (
@@ -78,7 +71,15 @@ export default function Register() {
           isSubmitting,
         }) => (
           <View style={styles.form}>
-            <TouchableOpacity style={styles.goback}>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.reset({
+                  index: 0,
+                  routes: [{ name: 'Login' }],
+                });
+              }}
+              style={styles.goback}
+            >
               <MaterialCommunityIcons name="arrow-left" style={[styles.textMainColour, {marginRight: 5}]} />
               <Text style={styles.textMainColour}>
                 Volver

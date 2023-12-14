@@ -3,7 +3,7 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   form: {
     flex: 1,
-    marginTop: "auto",
+    marginTop: "15%",
     gap: 20,
     width: "80%",
     maxWidth: 500,
@@ -22,7 +22,7 @@ export const styles = StyleSheet.create({
     left: 10,
     fontWeight: "300",
     paddingHorizontal: 5,
-    backgroundColor: "#fff",
+    backgroundColor: "rgb(242, 242, 242)",
   },
   input: {
     backgroundColor: "transparent",

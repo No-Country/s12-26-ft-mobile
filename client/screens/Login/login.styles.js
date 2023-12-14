@@ -2,6 +2,7 @@ import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
   logo: {
+    marginTop: "15%",
     marginBottom: 10,
     marginLeft: "auto",
     marginRight: "auto",
@@ -26,7 +27,7 @@ export const styles = StyleSheet.create({
     left: 10,
     fontWeight: "300",
     paddingHorizontal: 5,
-    backgroundColor: "#fff",
+    backgroundColor: "rgb(242, 242, 242)",
   },
   input: {
     backgroundColor: "transparent",
