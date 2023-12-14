@@ -5,7 +5,7 @@ import { rootColors } from '../../../constants';
 export const styles = StyleSheet.create({
   container: {
     width: '100%',
-    height: normalize(60),
+    height: normalize(56),
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
@@ -13,10 +13,10 @@ export const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   button: {
-    width: normalize(60),
-    height: normalize(40),
-    borderRadius: normalize(8),
-    backgroundColor: rootColors.primary,
+    width: normalize(56),
+    height: normalize(56),
+    borderRadius: normalize(16),
+    backgroundColor: '#FFD9DD',
     justifyContent: 'center',
     alignItems: 'center',
   },

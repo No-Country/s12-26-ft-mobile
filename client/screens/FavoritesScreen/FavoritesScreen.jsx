@@ -2,11 +2,13 @@ import { View, Text, SafeAreaView, FlatList } from 'react-native';
 import { Card, SearchBar } from '../../components';
 import { PLACES } from '../Home/fakeData';
 import { styles } from './styles/FavoritesScreen.styles';
+import Header from '../../components/Profile/Header';
 
 const FavoritesScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.wrapper}>
+        <Header />
         <SearchBar />
         <Text style={styles.title}>Mis favoritos</Text>
         <FlatList

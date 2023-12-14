@@ -19,14 +19,14 @@ const SearchBar = () => {
       />
       <MaterialIcons
         name='filter-list-alt'
-        size={24}
-        color='black'
+        size={26}
+        color='#46464F'
         style={styles.filterIcon}
       />
       <MaterialIcons
         name='search'
-        size={24}
-        color='black'
+        size={26}
+        color='#46464F'
         style={styles.searchIcon}
       />
     </View>

@@ -4,12 +4,13 @@ import { Card, SearchBar } from '../../components';
 import { styles } from './styles/Home.styles';
 import { PLACES } from './fakeData';
 import { MapButton } from './components';
+import Header from '../../components/Profile/Header';
 
 export default function Home() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.wrapper}>
-        <Text style={styles.title}>Encuentra tu lugar ideal</Text>
+        <Header />
         <SearchBar />
         <Text style={styles.subTitle}>Publicadas recientemente</Text>
         <FlatList

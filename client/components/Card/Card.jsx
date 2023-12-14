@@ -13,13 +13,13 @@ const Card = ({
     <View style={styles.container}>
       <Image source={{ uri: imageUrl }} style={styles.image} />
       <View style={styles.textContainer}>
-        <Text>{location} &#183; </Text>
-        <Text>{description}</Text>
-      </View>
-      <View style={styles.textContainer}>
-        <Text>{`$${price} USD / `}</Text>
-        <Text>{instalment} &#183; </Text>
-        <Text>{dimensions}</Text>
+        <Text style={styles.textLocation}>{location}</Text>
+        <Text style={styles.textDescription}>{description}</Text>
+        <View style={styles.textWrapper}>
+          <Text style={styles.textDescription}>{`$${price} USD / `}</Text>
+          <Text style={styles.textDescription}>{instalment} &#183; </Text>
+          <Text style={styles.textDescription}>{dimensions}</Text>
+        </View>
       </View>
     </View>
   );
