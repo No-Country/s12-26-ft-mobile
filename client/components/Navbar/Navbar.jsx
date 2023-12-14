@@ -3,13 +3,13 @@ import { BottomNavigation } from 'react-native-paper';
 import { routes as navbarRoutes } from '../../utils/routesUtils';
 import { View, StyleSheet } from 'react-native';
 import Profile from '../Profile';
-import { FavoritesScreen, Home } from '../../screens';
+import { FavoritesScreen, Login } from '../../screens';
 
 const Navbar = () => {
   const [index, setIndex] = useState(0);
   const [routes] = useState(navbarRoutes);
 
-  const Buscar = () => <Home />;
+  const Buscar = () => <Login />;
 
   const Guardados = () => <FavoritesScreen />;
 
