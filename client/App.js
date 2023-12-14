@@ -1,7 +1,8 @@
-import Home from './screens/Home/Home';
+import { FavoritesScreen, Home } from './screens';
 
 export default function App() {
   return (
-      <Home/>
+    <Home />
+    //<FavoritesScreen />
   );
 }
