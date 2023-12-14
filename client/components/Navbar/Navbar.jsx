@@ -4,12 +4,13 @@ import { routes as navbarRoutes } from '../../utils/routesUtils';
 import { View, StyleSheet } from 'react-native';
 
 import Profile from '../Profile';
+import { Home } from '../../screens';
 
 const Navbar = () => {
   const [index, setIndex] = useState(0);
   const [routes] = useState(navbarRoutes);
 
-  const Buscar = () => <Text>Buscar</Text>;
+  const Buscar = () => <Home />;
 
   const Guardados = () => <Text>guardados</Text>;
 
@@ -27,7 +28,7 @@ const Navbar = () => {
     },
     barStyle: {
       backgroundColor: '#F3EDF7',
-    }
+    },
   });
 
   return (
@@ -38,7 +39,7 @@ const Navbar = () => {
         renderScene={renderScene}
         labeled={false}
         barStyle={styles.barStyle}
-        theme={{colors: {secondaryContainer: '#FFD9DD'}}}
+        theme={{ colors: { secondaryContainer: '#FFD9DD' } }}
       />
     </View>
   );

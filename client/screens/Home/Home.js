@@ -1,7 +1,7 @@
-import { View, StyleSheet } from "react-native";
-import Navbar from "../../components/Navbar";
+import { View, StyleSheet } from 'react-native';
+import Navbar from '../../components/Navbar';
 
-const Home = () => {
+const Home2 = () => {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -20,4 +20,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Home2;
