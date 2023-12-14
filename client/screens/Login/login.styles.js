@@ -1,0 +1,83 @@
+import { StyleSheet } from "react-native";
+
+export const styles = StyleSheet.create({
+  logo: {
+    marginBottom: 10,
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  form: {
+    flex: 1,
+    gap: 20,
+    width: "80%",
+    maxWidth: 500,
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  fieldSet: {
+    borderRadius: 8,
+    borderWidth: 1,
+    alignItems: "center",
+    position: "relative",
+  },
+  legend: {
+    position: "absolute",
+    top: -10,
+    left: 10,
+    fontWeight: "300",
+    paddingHorizontal: 5,
+    backgroundColor: "#fff",
+  },
+  input: {
+    backgroundColor: "transparent",
+    width: "100%",
+    padding: 13,
+    paddingRight: 42,
+    fontSize: 16,
+  },
+  submit: {
+    borderRadius: 20,
+    backgroundColor: "#4754ba",
+    textAlign: "center",
+    padding: 12,
+  },
+  submitContent: {
+    color: "#fff",
+    textAlign: "center",
+    fontWeight: "600",
+    fontSize: 15,
+  },
+  outlinedButton: {
+    marginTop: "25%",
+    borderColor: "#00000030",
+    borderWidth: 1,
+    padding: 12,
+    borderRadius: 20,
+    backgroundColor: "#fff",
+    width: "80%",
+    maxWidth: 500,
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  textMainColour: {
+    textAlign: "center",
+    color: "#4754ba",
+    fontWeight: "600",
+  },
+  errorMessage: {
+    marginTop: -13,
+    paddingHorizontal: 10,
+    color: "hsl(0 80% 60%)",
+    borderRadius: 8,
+    overflow: "hidden",
+  },
+  errorIcon: {
+    position: "absolute",
+    right: 10,
+    top: 10,
+    bottom: 10,
+    marginTop: "auto",
+    marginBottom: "auto",
+    height: 24,
+  },
+});
