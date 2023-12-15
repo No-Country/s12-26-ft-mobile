@@ -12,13 +12,13 @@ const useFetch = () => {
    * @param {string} [method='GET'] - HTTP method (GET, POST, PUT, etc.).
    * @param {object} [body] - Data to send in the request body.
    */
-  async function fetchData(url, method = 'GET', body = {}) {
+  async function fetchData(url, method = 'GET', body) {
     try {
       setIsLoading(true);
       const response = await axios({
         url: `${SERVER_URL}/${url}`,
         method,
-        data: body,
+        ...(body ? { data: body } : {}),
         headers: {
           'Content-Type': 'application/json',
         },

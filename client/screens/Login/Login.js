@@ -60,6 +60,7 @@ export default function Login({ navigation }) {
             handleSubmit,
             values,
             errors,
+            setValues,
             touched,
             isSubmitting,
           }) => (
@@ -163,6 +164,18 @@ export default function Login({ navigation }) {
 
               <TouchableOpacity>
                 <Text style={styles.textMainColour}>Olvidé mi contraseña</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => {
+                setValues({
+                  email: "alex@gmail.com",
+                  password: "admin"
+                })
+                setTimeout(() => {
+                  handleSubmit()
+                }, 200);
+              }}>
+                <Text style={styles.textMainColour}>Logueame</Text>
               </TouchableOpacity>
             </View>
           )}

@@ -7,6 +7,7 @@ export const styles = StyleSheet.create({
     height: normalize(56),
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 10
   },
   input: {
     position: 'absolute',
