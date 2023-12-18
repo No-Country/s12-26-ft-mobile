@@ -13,3 +13,8 @@ data class FavoriteRequest(
 data class FavoriteByUserRequest(
     val user: Int,
 )
+
+@Serializable
+data class FavoriteByIDRequest(
+    val id: Int,
+)

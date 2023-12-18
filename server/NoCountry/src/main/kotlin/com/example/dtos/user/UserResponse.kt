@@ -14,3 +14,5 @@ data class UserResponse(
     val budget: Double,
     val searchedArea: String
 )
+@Serializable
+data class UserResponsePost(val status: String, val userId: Int?, val userName: String?, val userLocation: String?)

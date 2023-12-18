@@ -1,5 +1,6 @@
 package com.example.plugins
 
+import com.example.dtos.favorite.FavoriteByIDRequest
 import com.example.dtos.favorite.FavoriteByUserRequest
 import com.example.dtos.favorite.FavoriteRequest
 import com.example.dtos.room.RoomFilterRequest
@@ -8,6 +9,7 @@ import com.example.dtos.room.RoomRequest
 import com.example.dtos.room.RoomResponse
 import com.example.dtos.roomType.RoomTypeResponse
 import com.example.dtos.services.ServicesRequest
+import com.example.dtos.user.UserResponsePost
 import com.example.entity.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
@@ -93,23 +95,36 @@ fun Application.configureSerialization() {
                 )
             }
         }
-
         post("/validateUser") {
             val input = call.receive<UserCredentials>()
 
-            val user = transaction {
-                UserLoginTable.select {
-                    (UserLoginTable.email eq input.email) and (UserLoginTable.password eq input.password)
-                }.singleOrNull()
-            }
+            try {
+                transaction {
+                    val userLogin = UserLoginTable.select {
+                        (UserLoginTable.email eq input.email) and (UserLoginTable.password eq input.password)
+                    }.singleOrNull()
 
-            if (user != null) {
-                call.respond(mapOf("status" to "success"))
-            } else {
-                call.respond(mapOf("status" to "failure"))
+                    if (userLogin != null) {
+                        val user = UserTable.select { UserTable.id eq userLogin[UserLoginTable.user] }.singleOrNull()
+                        if (user != null) {
+                            val userId = userLogin[UserLoginTable.id].value
+                            val userName = user[UserTable.name]
+                            val userLocation = user[UserTable.location]
+                            // Aquí puedes usar userId, userName y userLocation
+
+                            launch { call.respond(UserResponsePost("success", userId, userName, userLocation)) }
+                        } else {
+                            launch { call.respond(UserResponsePost("failure", null, null, null)) }
+                        }
+                    } else {
+                        launch { call.respond(UserResponsePost("failure", null, null, null)) }
+                    }
+                }
+            } catch (e: Exception) {
+                application.log.error("Error during transaction", e)
+                launch { call.respond(HttpStatusCode.InternalServerError, "Error during transaction") }
             }
         }
-
 
         /*
 
@@ -229,8 +244,8 @@ fun Application.configureSerialization() {
                         val roomExist = RoomTable.select {
                             RoomTable.id eq input.room
                         }.singleOrNull() != null
-                        val userExist = UserTable.select {
-                            UserTable.id eq input.user
+                        val userExist = UserLoginTable.select {
+                            UserLoginTable.id eq input.user
                         }.singleOrNull() != null
 
                         if (roomExist && userExist) {
@@ -401,6 +416,37 @@ fun Application.configureSerialization() {
                 application.log.error("Error handling /getRoom request", e)
                 // Respond with a 500 status code
                 call.respond(HttpStatusCode.InternalServerError)
+            }
+        }
+
+        post("/deleteFavoriteById") {
+            launch {
+                try {
+                    val input = call.receive<FavoriteByIDRequest>() // Asume que FavoriteByUserRequest tiene un campo 'id'
+
+                    transaction {
+                        val deletedRows = FavoriteTable.deleteWhere { FavoriteTable.id eq input.id }
+
+                        if (deletedRows > 0) {
+                            launch { call.respond(mapOf("Status" to "Success")) }
+                        } else {
+                            launch {
+                                call.respond(
+                                    HttpStatusCode.BadRequest,
+                                    mapOf("Status" to "Failure", "Message" to "Favorite not found")
+                                )
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Log the exception
+                    application.log.error("Error handling /deleteFavoriteById request", e)
+                    // Respond with a 500 status code and a message
+                    call.respond(
+                        HttpStatusCode.InternalServerError,
+                        mapOf("Status" to "Failure", "Message" to e.localizedMessage)
+                    )
+                }
             }
         }
 
