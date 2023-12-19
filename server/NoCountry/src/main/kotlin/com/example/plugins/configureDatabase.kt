@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 
 fun Application.configureDatabase() {
     val databaseName = "test"
-    val instanceConnectionName = "ktor-project-407503:us-central1:test"
+    val instanceConnectionName = "nocountry-408603:us-central1:nocountry"
     val user = "ryzer"
     val password = "David1091."
     var jdbcUrl = String.format(

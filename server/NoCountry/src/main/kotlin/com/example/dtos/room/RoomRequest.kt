@@ -14,7 +14,8 @@ data class RoomRequest(
     val isPet: Boolean,
     val isSmokers: Boolean,
     val room: Int,
-    val userId: Int
+    val userId: Int,
+    val serviceId: List<Int>,
 )
 
 

@@ -13,3 +13,7 @@ data class UserRequest(
     val budget: Double,
     val searchedArea: String
 )
+
+
+@Serializable
+data class UserLoginIdRequest(val id: Int)

@@ -3,12 +3,11 @@ package com.example.plugins
 import com.example.dtos.favorite.FavoriteByIDRequest
 import com.example.dtos.favorite.FavoriteByUserRequest
 import com.example.dtos.favorite.FavoriteRequest
-import com.example.dtos.room.RoomFilterRequest
-import com.example.dtos.room.RoomIdRequest
-import com.example.dtos.room.RoomRequest
-import com.example.dtos.room.RoomResponse
+import com.example.dtos.room.*
 import com.example.dtos.roomType.RoomTypeResponse
 import com.example.dtos.services.ServicesRequest
+import com.example.dtos.services.ServicesResponse
+import com.example.dtos.user.UserLoginIdRequest
 import com.example.dtos.user.UserResponsePost
 import com.example.entity.*
 import io.ktor.http.*
@@ -67,26 +66,34 @@ fun Application.configureSerialization() {
 
                 val input = Json.decodeFromString<InsertUserLogin>(content)
 
-
                 transaction {
-                    val userId = UserTable.insertAndGetId {
-                        it[image] = input.image
-                        it[name] = input.name
-                        it[age] = input.age
-                        it[location] = input.location
-                        it[biography] = input.biography
-                        it[isVerify] = input.isVerify
-                        it[budget] = input.budget
-                        it[searchedArea] = input.searchedArea
-                    }.value
+                    // Verificar si el correo electrónico ya está en uso
+                    val existingUser = UserLoginTable.select { UserLoginTable.email eq input.email }.singleOrNull()
 
-                    UserLoginTable.insert {
-                        it[user] = userId
-                        it[email] = input.email
-                        it[password] = input.password
+                    if (existingUser != null) {
+                        // Si el correo electrónico ya está en uso, responder con un mensaje
+                        launch { call.respond(HttpStatusCode.BadRequest, "Este correo electrónico ya fue usado") }
+                    } else {
+                        // Si el correo electrónico no está en uso, proceder con la inserción
+                        val userId = UserTable.insertAndGetId {
+                            it[image] = input.image
+                            it[name] = input.name
+                            it[age] = input.age
+                            it[location] = input.location
+                            it[biography] = input.biography
+                            it[isVerify] = input.isVerify
+                            it[budget] = input.budget
+                            it[searchedArea] = input.searchedArea
+                        }.value
+
+                        UserLoginTable.insert {
+                            it[user] = userId
+                            it[email] = input.email
+                            it[password] = input.password
+                        }
+                        launch { call.respond(mapOf("status" to "success")) }
                     }
                 }
-                call.respond(mapOf("status" to "success"))
             } catch (e: Exception) {
                 application.log.error("Error handling /insertNewUserTable request", e)
                 call.respond(
@@ -211,6 +218,15 @@ fun Application.configureSerialization() {
                                 it[user] = input.userId
                                 it[room] = roomId
                             }
+
+                            // Insert into ServicesRoomTable
+                            input.serviceId.forEach { serviceId ->
+                                RoomServiceTable.insert {
+                                    it[room] = roomId
+                                    it[service] = serviceId
+                                }
+                            }
+
                             launch { call.respond(mapOf("Status" to "Success")) }
                         } else {
                             // If the room type does not exist, respond with an error message
@@ -342,23 +358,38 @@ fun Application.configureSerialization() {
                 val input = call.receive<RoomIdRequest>()
                 val roomId = input.id
                 val room = transaction {
-                    RoomTable.select { RoomTable.id eq roomId }.map {
-                        RoomResponse(
-                            it[RoomTable.id].value,
-                            it[RoomTable.image],
-                            it[RoomTable.title],
-                            it[RoomTable.city],
-                            it[RoomTable.district],
-                            it[RoomTable.province],
-                            it[RoomTable.monthPrice],
-                            it[RoomTable.sizeM2],
-                            it[RoomTable.isPet],
-                            it[RoomTable.isSmokers],
-                            it[RoomTable.room_type],
-                        )
-                    }.toList()
+                    val roomServices = (RoomTable innerJoin RoomServiceTable innerJoin ServicesTable)
+                        .select { RoomTable.id eq roomId }
+                        .map {
+                            Pair(
+                                RoomServicesResponse(
+                                    it[RoomTable.id].value,
+                                    it[RoomTable.image],
+                                    it[RoomTable.title],
+                                    it[RoomTable.city],
+                                    it[RoomTable.district],
+                                    it[RoomTable.province],
+                                    it[RoomTable.monthPrice],
+                                    it[RoomTable.sizeM2],
+                                    it[RoomTable.isPet],
+                                    it[RoomTable.isSmokers],
+                                    it[RoomTable.room_type],
+                                    emptyList()
+                                ),
+                                ServicesResponse(
+                                    it[ServicesTable.id].value,
+                                    it[ServicesTable.name]
+                                )
+                            )
+                        }
+
+                    val roomMap = roomServices.groupBy({ it.first }, { it.second })
+
+                    roomMap.map { (room, services) ->
+                        room.copy(services = services)
+                    }.singleOrNull()
                 }
-                if (room.isNotEmpty()) {
+                if (room != null) {
                     call.respond(room)
                 } else {
                     call.respond(HttpStatusCode.NotFound, "Room not found")
@@ -370,7 +401,6 @@ fun Application.configureSerialization() {
                 call.respond(HttpStatusCode.InternalServerError)
             }
         }
-
 
         post("/getRoomFilter") {
             try {
@@ -422,7 +452,8 @@ fun Application.configureSerialization() {
         post("/deleteFavoriteById") {
             launch {
                 try {
-                    val input = call.receive<FavoriteByIDRequest>() // Asume que FavoriteByUserRequest tiene un campo 'id'
+                    val input =
+                        call.receive<FavoriteByIDRequest>() // Asume que FavoriteByUserRequest tiene un campo 'id'
 
                     transaction {
                         val deletedRows = FavoriteTable.deleteWhere { FavoriteTable.id eq input.id }
@@ -447,6 +478,63 @@ fun Application.configureSerialization() {
                         mapOf("Status" to "Failure", "Message" to e.localizedMessage)
                     )
                 }
+            }
+        }
+
+        post("/getUserInfoById") {
+            try {
+                val input = call.receive<UserLoginIdRequest>()
+
+                transaction {
+                    val userLogin = UserLoginTable.select { UserLoginTable.id eq input.id }.singleOrNull()
+
+                    if (userLogin != null) {
+                        val user = UserTable.select { UserTable.id eq userLogin[UserLoginTable.user] }.singleOrNull()
+
+                        if (user != null) {
+                            val userInfo = User(
+                                user[UserTable.id].value,
+                                user[UserTable.image],
+                                user[UserTable.name],
+                                user[UserTable.age],
+                                user[UserTable.location],
+                                user[UserTable.biography],
+                                user[UserTable.isVerify],
+                                user[UserTable.budget],
+                                user[UserTable.searchedArea]
+
+                            )
+                            launch { call.respond(userInfo) }
+                        } else {
+                            launch { call.respond(HttpStatusCode.NotFound, "User not found") }
+                        }
+                    } else {
+                        launch { call.respond(HttpStatusCode.NotFound, "UserLogin not found") }
+                    }
+                }
+            } catch (e: Exception) {
+                application.log.error("Error handling /getUserInfo request", e)
+                launch { call.respond(HttpStatusCode.InternalServerError) }
+            }
+        }
+
+
+        get("/getServices") {
+            try {
+                val services = transaction {
+                    ServicesTable.selectAll().map {
+                        ServicesResponse(
+                            it[ServicesTable.id].value,
+                            it[ServicesTable.name]
+                        )
+                    }
+                }.toList()
+                call.respond(services)
+            } catch (e: Exception) {
+                // Log the exception
+                application.log.error("Error handling /getServices request", e)
+                // Respond with a 500 status code
+                call.respond(HttpStatusCode.InternalServerError)
             }
         }
 
