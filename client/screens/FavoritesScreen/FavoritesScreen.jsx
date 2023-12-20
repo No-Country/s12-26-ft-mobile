@@ -1,34 +1,63 @@
-import { View, Text, SafeAreaView, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { Card, SearchBar } from '../../components';
-import { PLACES } from '../Home/fakeData';
 import { styles } from './styles/FavoritesScreen.styles';
 import Header from '../../components/Profile/Header';
+import { favoritesStore } from '../../store';
+import { useFetch } from '../../hooks';
+import { useFavorites } from './hooks';
 
 const FavoritesScreen = () => {
+  const { isLoading } = useFetch();
+  const { handlePress, showLoader } = useFavorites();
+  const favoritesRooms = favoritesStore((state) => state.favoritesRooms);
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.wrapper}>
-        <Header />
-        <SearchBar />
-        <Text style={styles.title}>Mis favoritos</Text>
-        <FlatList
-          showsVerticalScrollIndicator={false}
-          data={PLACES}
-          keyExtractor={(item) => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.cardWrapper}>
-              <Card
-                location={item.location}
-                description={item.description}
-                imageUrl={item.image}
-                price={item.price}
-                dimensions={item.dimensions}
-                instalment={item.instalment}
-              />
-            </View>
-          )}
+      {isLoading && showLoader ? (
+        <ActivityIndicator
+          size='large'
+          color={'#789cc0'}
+          style={{ alignSelf: 'center', flex: 1 }}
         />
-      </View>
+      ) : (
+        <View style={styles.wrapper}>
+          <Header />
+          <SearchBar />
+          <ScrollView showsVerticalScrollIndicator={false}>
+            <Text style={styles.title}>Mis favoritos</Text>
+            {favoritesRooms?.length > 0 ? (
+              <>
+                {favoritesRooms?.map((item) => (
+                  <View style={styles.cardWrapper} key={item?.roomId}>
+                    <Card
+                      roomId={item?.roomId}
+                      image={item?.image}
+                      city={item?.city}
+                      title={item?.title}
+                      monthPrice={item?.monthPrice}
+                      sizeM2={item?.sizeM2}
+                      district={item?.district}
+                      province={item?.province}
+                      room={item?.room}
+                      handlePress={handlePress}
+                    />
+                  </View>
+                ))}
+              </>
+            ) : (
+              <Text>No hay favoritos para mostrar</Text>
+            )}
+          </ScrollView>
+        </View>
+      )}
+      <StatusBar style='auto' />
     </SafeAreaView>
   );
 };

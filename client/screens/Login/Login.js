@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from './login.styles';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useFetch } from '../../hooks';
+import { userStore } from '../../store';
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -24,15 +25,17 @@ const loginSchema = Yup.object().shape({
 
 export default function Login({ navigation }) {
   const { fetchData } = useFetch();
+  const addUser = userStore((state) => state.addUser);
 
   async function handleSubmit({ email, password }) {
-    const res = await fetchData('/validateUser', 'POST', {
+    const res = await fetchData('validateUser', 'POST', {
       email,
       password,
     });
 
     console.log('Estado del Login: ' + res.status);
     if (res.status === 'success') {
+      addUser(res);
       navigation.reset({
         index: 0,
         routes: [{ name: 'Navbar' }],
@@ -166,15 +169,17 @@ export default function Login({ navigation }) {
                 <Text style={styles.textMainColour}>Olvidé mi contraseña</Text>
               </TouchableOpacity>
 
-              <TouchableOpacity onPress={() => {
-                setValues({
-                  email: "alex@gmail.com",
-                  password: "admin"
-                })
-                setTimeout(() => {
-                  handleSubmit()
-                }, 200);
-              }}>
+              <TouchableOpacity
+                onPress={() => {
+                  setValues({
+                    email: 'alex@gmail.com',
+                    password: 'admin',
+                  });
+                  setTimeout(() => {
+                    handleSubmit();
+                  }, 200);
+                }}
+              >
                 <Text style={styles.textMainColour}>Logueame</Text>
               </TouchableOpacity>
             </View>

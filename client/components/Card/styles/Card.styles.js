@@ -9,6 +9,12 @@ export const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#D7D5DE',
   },
+  heartButton: {
+    position: 'absolute',
+    top: normalize(20, 'height'),
+    right: normalize(20, 'width'),
+    zIndex: 10,
+  },
   image: {
     width: '100%',
     height: normalize(188),
