@@ -30,7 +30,7 @@ const useFavorites = () => {
   }, []);
 
   async function handlePress(roomId) {
-    const roomExist = favoritesRooms.find((item) => item?.roomId === roomId);
+    const roomExist = favoritesRooms?.find((item) => item?.roomId === roomId);
     if (roomExist) {
       const favoritesFiltered = favoritesRooms.filter(
         (item) => item?.roomId !== roomExist.roomId
@@ -42,7 +42,7 @@ const useFavorites = () => {
   }
 
   const isFavorite = (roomId) => {
-    const roomExist = favoritesRooms.find((item) => item?.roomId === roomId);
+    const roomExist = favoritesRooms?.find((item) => item?.roomId === roomId);
     return roomExist ? true : false;
   };
 

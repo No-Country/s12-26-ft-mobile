@@ -28,7 +28,7 @@ const Navbar = () => {
     buscar: Buscar,
     guardados: Guardados,
     perfil: Perfil,
-    roomInformation: RoomInformation,
+    // roomInformation: RoomInformation,
   });
 
   const styles = StyleSheet.create({

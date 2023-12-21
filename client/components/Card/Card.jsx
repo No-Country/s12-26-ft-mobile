@@ -2,34 +2,32 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from './styles/Card.styles';
 import { useFavorites } from '../../screens/FavoritesScreen/hooks';
-import { cardSelectedStore } from '../../store';
+import { dataSelectedStore } from '../../store';
 
-const Card = ({
-  roomId,
-  image,
-  city,
-  title,
-  monthPrice,
-  sizeM2,
-  district,
-  province,
-  room,
-  handlePress,
-  handleChangeState,
-}) => {
+const Card = (data) => {
   const { isFavorite } = useFavorites();
+  const setSelectedData = dataSelectedStore((state) => state.setSelectedData);
 
-  // const setIsSelected = cardSelectedStore((state) => state.setIsSelected);
-  // const isSelected = cardSelectedStore((state) => state.isSelected);
+  const {
+    roomId,
+    image,
+    city,
+    title,
+    monthPrice,
+    sizeM2,
+    district,
+    province,
+    room,
+    handlePress,
+    handleChangeState,
+  } = data
 
-  // const setIsSelectedHome = cardSelectedStore((state) => state.setIsSelectedHome);
-  // const isSelectedHome = cardSelectedStore((state) => state.isSelectedHome);
+  console.log(title)
 
   return (
     <TouchableOpacity
       style={styles.container}
-      onPress={() => handleChangeState()}
-      // onPress={() => alert('suuuu')}
+      onPress={() => {handleChangeState(); setSelectedData(data)}}
     >
       <TouchableOpacity
         style={styles.heartButton}
