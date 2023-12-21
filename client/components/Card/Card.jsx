@@ -36,7 +36,7 @@ const Card = ({
         onPress={() => handlePress(roomId)}
       >
         {isFavorite(roomId) ? (
-          <MaterialCommunityIcons name='heart' size={28} color='red' />
+          <MaterialCommunityIcons name='heart' size={28} color='#EF476F' />
         ) : (
           <MaterialCommunityIcons
             name='cards-heart-outline'

@@ -10,7 +10,7 @@ const userStore = create(
       addUser: (data) => {
         set({ user: data });
       },
-      removeFavoritesRoomsInfo: () => {
+      removeUserInfo: () => {
         set({ user: {} });
       },
       setIsLoading: (isLoading) => {
