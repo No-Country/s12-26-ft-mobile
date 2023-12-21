@@ -9,7 +9,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Card, SearchBar } from '../../components';
 import { styles } from './styles/FavoritesScreen.styles';
 import Header from '../../components/Profile/Header';
-import { favoritesStore } from '../../store';
+import { cardSelectedStore, favoritesStore } from '../../store';
 import { useFetch } from '../../hooks';
 import { useFavorites } from './hooks';
 
@@ -17,6 +17,8 @@ const FavoritesScreen = () => {
   const { isLoading } = useFetch();
   const { handlePress, showLoader } = useFavorites();
   const favoritesRooms = favoritesStore((state) => state.favoritesRooms);
+  const setIsSelected = cardSelectedStore((state) => state.setIsSelected);
+  const isSelected = cardSelectedStore((state) => state.isSelected);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -47,6 +49,7 @@ const FavoritesScreen = () => {
                       province={item?.province}
                       room={item?.room}
                       handlePress={handlePress}
+                      handleChangeState={() => setIsSelected(!isSelected)}
                     />
                   </View>
                 ))}

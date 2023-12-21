@@ -1,11 +1,10 @@
-import React from 'react'
-import { View, StyleSheet } from 'react-native'
-import { Text } from 'react-native-paper'
+import React from 'react';
+import { View, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
+import { Text } from 'react-native-paper';
 import normalize from 'react-native-normalize';
-import { cardSelectedStore } from '../../store'
+import { cardSelectedStore } from '../../store';
 
 const RoomInformation = () => {
-
   const styles = StyleSheet.create({
     imageContainer: {
       resizeMode: 'cover',
@@ -26,16 +25,32 @@ const RoomInformation = () => {
       position: 'absolute',
       top: 20,
       left: 20,
-      zIndex: 1
+      zIndex: 1,
     },
-  })
+  });
 
-  const selectedCard = cardSelectedStore((state) => state.selectedCard);
-
-  alert(selectedCard)
+  const setIsSelected = cardSelectedStore((state) => state.setIsSelected);
+  const isSelected = cardSelectedStore((state) => state.isSelected);
+  const setIsSelectedHome = cardSelectedStore(
+    (state) => state.setIsSelectedHome
+  );
+  const isSelectedHome = cardSelectedStore((state) => state.isSelectedHome);
 
   return (
-    <View>
+    <SafeAreaView>
+      <TouchableOpacity
+        onPress={() => {
+          if (!isSelected) {
+            setIsSelected(!isSelected);
+          }
+          if (!isSelectedHome) {
+            setIsSelectedHome(!isSelectedHome);
+          }
+        }}
+        style={{ marginTop: 70 }}
+      >
+        <Text> holaaa </Text>
+      </TouchableOpacity>
       {/* <View style={styles.imageContainer}>
         <AntDesign
           name="arrowleft"
@@ -86,8 +101,8 @@ const RoomInformation = () => {
         </View>
 
       </View> */}
-    </View>
-  )
-}
+    </SafeAreaView>
+  );
+};
 
-export default RoomInformation
+export default RoomInformation;

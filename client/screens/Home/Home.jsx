@@ -11,13 +11,17 @@ import { styles } from './styles/Home.styles';
 import { MapButton } from './components';
 import Header from '../../components/Profile/Header';
 import { useFetch } from '../../hooks';
-import { roomsStore } from '../../store';
+import { cardSelectedStore, roomsStore } from '../../store';
 import { useHomeScreen } from './hooks';
 
 export default function Home() {
   const { isLoading } = useFetch();
   const { handlePress, showSpinner } = useHomeScreen();
   const rooms = roomsStore((state) => state.rooms);
+  const setIsSelectedHome = cardSelectedStore(
+    (state) => state.setIsSelectedHome
+  );
+  const isSelectedHome = cardSelectedStore((state) => state.isSelectedHome);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,6 +52,9 @@ export default function Home() {
                       province={item?.province}
                       room={item?.room}
                       handlePress={handlePress}
+                      handleChangeState={() =>
+                        setIsSelectedHome(!isSelectedHome)
+                      }
                     />
                   </View>
                 ))}

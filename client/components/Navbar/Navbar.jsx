@@ -5,26 +5,30 @@ import { View, StyleSheet } from 'react-native';
 import { FavoritesScreen, Home } from '../../screens';
 import Profile from '../Profile';
 import NewRoom from '../Profile/NewRoom';
-import newRoomStore from '../../store/newRoomStore';
 import RoomInformation from '../RoomInformation';
+import { newRoomStore, cardSelectedStore } from '../../store';
 
 const Navbar = () => {
   const [index, setIndex] = useState(0);
   const [routes] = useState(navbarRoutes);
 
   const selectedComponent = newRoomStore((state) => state.selectedComponent);
+  const isSelectedHome = cardSelectedStore((state) => state.isSelectedHome);
+  const isSelected = cardSelectedStore((state) => state.isSelected);
 
-  const Buscar = () => <Home />;
+  const Buscar = () => (isSelectedHome ? <Home /> : <RoomInformation />);
 
-  const Guardados = () => <FavoritesScreen />;
-  // const Guardados = () => <RoomInformation />;
+  const Guardados = () =>
+    isSelected ? <FavoritesScreen /> : <RoomInformation />;
 
-  const Perfil = () => (selectedComponent === 'profile' ? <Profile /> : <NewRoom />);
+  const Perfil = () =>
+    selectedComponent === 'profile' ? <Profile /> : <NewRoom />;
 
   const renderScene = BottomNavigation.SceneMap({
     buscar: Buscar,
     guardados: Guardados,
     perfil: Perfil,
+    roomInformation: RoomInformation,
   });
 
   const styles = StyleSheet.create({

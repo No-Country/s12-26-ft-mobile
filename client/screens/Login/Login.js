@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   TextInput,
 } from 'react-native';
+import { useEffect } from 'react';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 import { AppLogoWide } from '../../components/Icons/IconsView';
@@ -26,6 +27,16 @@ const loginSchema = Yup.object().shape({
 export default function Login({ navigation }) {
   const { fetchData } = useFetch();
   const addUser = userStore((state) => state.addUser);
+  const user = userStore((state) => state.user);
+
+  useEffect(() => {
+    if (user?.userId) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Navbar' }],
+      });
+    }
+  }, [user]);
 
   async function handleSubmit({ email, password }) {
     const res = await fetchData('validateUser', 'POST', {
