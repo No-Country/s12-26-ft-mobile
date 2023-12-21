@@ -53,7 +53,7 @@ const NewRoom = () => {
 
         <View style={{ flexDirection: 'row' }}>
           <TouchableOpacity onPress={handleArrowLeftClick}>
-            <View style={{ marginTop: 30, marginLeft: 16 }}>
+            <View style={{ marginTop: 46, marginLeft: 16 }}>
               {arrowLeftIcon}
             </View>
           </TouchableOpacity>
