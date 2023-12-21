@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { View, ScrollView, TouchableOpacity } from 'react-native'
-import { Text, TextInput, Divider, Chip, Button } from 'react-native-paper'
+import { Text, TextInput, Divider, Chip } from 'react-native-paper'
 import Header from '../Header'
 import { Octicons, AntDesign } from '@expo/vector-icons';
 import { styles } from './NewRoom.styles'
@@ -16,13 +16,14 @@ const NewRoom = () => {
   const setSelectedComponent = newRoomStore((state) => state.setSelectedComponent);
 
   let [data, setData] = useState({
+    linkImagen: '',
     titulo: '',
     descripcion: '',
     zona: '',
     tipoHabitacion: [],
     tipoPropiedad: [],
-    renta: '',
-    tamanio: '',
+    renta: undefined,
+    tamanio: undefined,
     servicios: []
   })
 
@@ -143,7 +144,7 @@ const NewRoom = () => {
             <TextInput
               style={styles.inputs}
               label='Precio'
-              onChangeText={(value) => setInformation('precio', value)}
+              onChangeText={(value) => setInformation('renta', value)}
             />
             <TextInput
               style={styles.inputs}
@@ -196,6 +197,18 @@ const NewRoom = () => {
                 onPress={() => selectedChip('servicios', 8)}>TV</Chip>
             </View>
           </ScrollView>
+        </View>
+
+        <Divider />
+
+        <View style={{ alignItems: 'center', flexDirection: 'row', marginVertical: 20, marginHorizontal: 30, borderWidth: 1, borderColor: 'black' }}>
+          <TextInput
+            label="Enlace de imagen"
+            onChangeText={(value) => setInformation('linkImagen', value)}
+            underlineColorAndroid="transparent"      
+            left={<TextInput.Icon icon="link" color='#4754BA' />}  
+            style={{ flex: 1, borderWidth: 0, backgroundColor: 'transparent',  fontSize: 18 }}
+          />
         </View>
 
         <PublicarButton data={data ? data : undefined} />

@@ -1,8 +1,11 @@
-import React from 'react';
-import { View, StyleSheet, SafeAreaView, TouchableOpacity } from 'react-native';
-import { Text } from 'react-native-paper';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import { Text, Button } from 'react-native-paper';
 import normalize from 'react-native-normalize';
-import { cardSelectedStore } from '../../store';
+import { cardSelectedStore, dataSelectedStore } from '../../store';
+import { useFetch } from '../../hooks'
+
+import { AntDesign, MaterialIcons } from '@expo/vector-icons';
 
 const RoomInformation = () => {
   const styles = StyleSheet.create({
@@ -29,6 +32,32 @@ const RoomInformation = () => {
     },
   });
 
+  const { fetchData } = useFetch();
+
+  const [roomData, setRoomData] = useState()
+
+  useEffect(() => {
+    const fetchRoomData = async () => {
+      try {
+        const res = await fetchData('/getRoomById', 'POST', {
+          id: item?.roomId,
+        });
+        setRoomData(res);
+        console.log('Estado de la peticion: ' + res?.status);
+      } catch (error) {
+        console.error('Error en la petición:', error);
+      }
+    };
+    
+    fetchRoomData();
+  }, [item?.roomId])
+  
+  
+  // console.log(roomData.title);
+
+  const item = dataSelectedStore((state) => state?.selectedData);
+
+
   const setIsSelected = cardSelectedStore((state) => state.setIsSelected);
   const isSelected = cardSelectedStore((state) => state.isSelected);
   const setIsSelectedHome = cardSelectedStore(
@@ -38,53 +67,46 @@ const RoomInformation = () => {
 
   return (
     <SafeAreaView>
-      <TouchableOpacity
-        onPress={() => {
-          if (!isSelected) {
-            setIsSelected(!isSelected);
-          }
-          if (!isSelectedHome) {
-            setIsSelectedHome(!isSelectedHome);
-          }
-        }}
-        style={{ marginTop: 70 }}
-      >
-        <Text> holaaa </Text>
-      </TouchableOpacity>
-      {/* <View style={styles.imageContainer}>
+      <View style={styles.imageContainer}>
         <AntDesign
           name="arrowleft"
           size={30}
           color="#4754BA"
           style={styles.arrowIcon}
-          onPress={hideModal}
+          onPress={() => {
+            if (!isSelected) {
+              setIsSelected(!isSelected);
+            }
+            if (!isSelectedHome) {
+              setIsSelectedHome(!isSelectedHome);
+            }
+          }}
         />
         <Image source={{ uri: item.image }} style={styles.image} />
       </View>
 
-      <View style={{ flex: 3, marginHorizontal: 40 }}>
+      {/* <Text>{item.city}</Text> */}
+
+      <View style={{  marginHorizontal: 40 }}>
         <View style={{ marginVertical: 10 }}>
-          <Text style={{ color: '#1B1B1F', fontWeight: 500 }}>{item.description}</Text>
-          <Text style={{ color: '#696970' }}>{item.dimensions}</Text>
+          <Text style={{ color: '#1B1B1F', fontWeight: 700 }}>{item.title}</Text>
+          <Text style={{ color: '#696970' }}>Habitacion {item.room} de {item.sizeM2}m2</Text>
         </View>
 
         <View style={{ marginVertical: 10 }}>
-          <Text style={{ color: '#1B1B1F', fontWeight: 500 }}>Zona</Text>
+          <Text style={{ color: '#1B1B1F', fontWeight: 500 }}>{item.city}</Text>
           <Text style={{ color: '#696970' }}>ID: {item.id}</Text>
         </View>
 
-        <Text style={{ color: '#1B1B1F', fontWeight: 500, marginVertical: 10 }}>Servicios Incluidos</Text>
+        <Text style={{ color: '#1B1B1F', fontWeight: 700, marginVertical: 10, fontSize: 16 }}>Servicios Incluidos</Text>
 
-        <Text>Location: {item.location}</Text>
-        <Text>Price: {item.price}</Text>
-        <Text>Instalment: {item.instalment}</Text>
       </View>
 
       <View style={{ flexDirection: 'row' }}>
 
         <View style={{ flex: 1, marginLeft: 50 }}>
-          <Text style={{ color: '#1B1B1F', fontWeight: 500 }}>{item.price} USD</Text>
-          <Text style={{ color: '#696970' }}>{item.instalment}</Text>
+          <Text style={{ color: '#1B1B1F', fontWeight: 500 }}>{item.monthPrice} USD</Text>
+          <Text style={{ color: '#696970' }}>Al mes</Text>
         </View>
 
         <View style={{ marginBottom: 30, flex: 1, marginRight: 30 }}>
@@ -100,7 +122,7 @@ const RoomInformation = () => {
           </Button>
         </View>
 
-      </View> */}
+      </View>
     </SafeAreaView>
   );
 };

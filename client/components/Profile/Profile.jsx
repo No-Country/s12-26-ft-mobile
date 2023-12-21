@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 
 import Buttons from './Buttons';
@@ -7,28 +7,10 @@ import Header from './Header';
 import UserInfo from './UserInfo';
 import Title from './Title';
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { userStore } from '../../store';
 
 const Profile = () => {
-  const [userData, setUserData] = useState(null);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const storedUserData = await AsyncStorage.getItem('userData');
-
-        if (storedUserData) {
-          const parsedUserData = JSON.parse(storedUserData);
-          setUserData(parsedUserData);
-          console.log(parsedUserData)
-        }
-      } catch (error) {
-        console.error('Error al obtener datos de AsyncStorage:', error);
-      }
-    };
-
-    fetchUserData();
-  }, []);
+  const userData = userStore((state) => state?.user);
 
   return (
     <View style={{marginTop: 21}}>
