@@ -2,18 +2,24 @@ import { useState } from 'react';
 import { BottomNavigation } from 'react-native-paper';
 import { routes as navbarRoutes } from '../../utils/routesUtils';
 import { View, StyleSheet } from 'react-native';
-import Profile from '../Profile';
 import { FavoritesScreen, Home } from '../../screens';
+import Profile from '../Profile';
+import NewRoom from '../Profile/NewRoom';
+import newRoomStore from '../../store/newRoomStore';
+import RoomInformation from '../RoomInformation';
 
 const Navbar = () => {
   const [index, setIndex] = useState(0);
   const [routes] = useState(navbarRoutes);
 
+  const selectedComponent = newRoomStore((state) => state.selectedComponent);
+
   const Buscar = () => <Home />;
 
   const Guardados = () => <FavoritesScreen />;
+  // const Guardados = () => <RoomInformation />;
 
-  const Perfil = () => <Profile />;
+  const Perfil = () => (selectedComponent === 'profile' ? <Profile /> : <NewRoom />);
 
   const renderScene = BottomNavigation.SceneMap({
     buscar: Buscar,

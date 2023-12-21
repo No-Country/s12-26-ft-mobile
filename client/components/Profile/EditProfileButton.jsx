@@ -19,7 +19,7 @@ const EditProfileButton = () => {
   })
 
   return (
-    <View style={{ alignItems: 'center', height: '100%', paddingTop: '20%'}}>
+    <View style={{ alignItems: 'center', height: '100%', paddingTop: '70%'}}>
       <Button
         mode='contained'
         icon={() => <MaterialIcons name="edit" size={20} color={'white'} />}
