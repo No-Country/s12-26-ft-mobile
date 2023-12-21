@@ -6,7 +6,7 @@ import { dataSelectedStore } from '../../store';
 
 const Card = (data) => {
   const { isFavorite } = useFavorites();
-  const setSelectedData = dataSelectedStore((state) => state.setSelectedData);
+  const setSelectedData = dataSelectedStore((state) => state?.setSelectedData);
 
   const {
     roomId,
@@ -22,7 +22,7 @@ const Card = (data) => {
     handleChangeState,
   } = data
 
-  console.log(title)
+  // console.log(data)
 
   return (
     <TouchableOpacity
@@ -48,7 +48,7 @@ const Card = (data) => {
         <Text
           style={styles.textLocation}
         >{`${city}, ${province}, ${district}`}</Text>
-        <Text style={styles.textDescription}>{`${room} ${title}`}</Text>
+        <Text style={styles.textDescription}>{`${title}`}</Text>
         <View style={styles.textWrapper}>
           <Text style={styles.textDescription}>{`$${monthPrice} USD / `}</Text>
           <Text style={styles.textDescription}>mes &#183; </Text>

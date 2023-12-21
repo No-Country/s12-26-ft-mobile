@@ -5,7 +5,7 @@ import normalize from 'react-native-normalize';
 import { cardSelectedStore, dataSelectedStore } from '../../store';
 import { useFetch } from '../../hooks'
 
-import { AntDesign, MaterialIcons } from '@expo/vector-icons';
+import { AntDesign, MaterialIcons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 
 const RoomInformation = () => {
   const styles = StyleSheet.create({
@@ -30,6 +30,15 @@ const RoomInformation = () => {
       left: 20,
       zIndex: 1,
     },
+    restrictions: {
+      flexDirection: 'row',
+      justifyContent: 'space-between'
+    },
+    restrictionsText: {
+      fontSize: 16,
+      fontWeight: 800,
+      marginTop: 10
+    }
   });
 
   const { fetchData } = useFetch();
@@ -48,15 +57,34 @@ const RoomInformation = () => {
         console.error('Error en la petición:', error);
       }
     };
-    
+
     fetchRoomData();
   }, [item?.roomId])
-  
-  
-  // console.log(roomData.title);
+
+  console.log(roomData);
 
   const item = dataSelectedStore((state) => state?.selectedData);
 
+  const checkIcon = <AntDesign name="check" size={24} color="green" />
+  const negativeIcon = <Feather name="x" size={24} color="red" />
+
+  const petIcon = <MaterialIcons name="pets" size={24} color="gray" />
+  const smokeIcon = <MaterialCommunityIcons name="cigar" size={24} color="gray" />
+
+  // const icons = () => {
+  //   wifi: <FontAwesome5 name="wifi" size={24} color="black" />,
+  // }
+
+  const showServices = () => {
+    if (roomData)
+      for (let service of roomData?.services) {
+        return (
+          <View>
+            <Text style={{ fontSize: 16, fontWeight: 700 }}> - {service?.name}</Text>
+          </View>
+        )
+      }
+  }
 
   const setIsSelected = cardSelectedStore((state) => state.setIsSelected);
   const isSelected = cardSelectedStore((state) => state.isSelected);
@@ -66,7 +94,7 @@ const RoomInformation = () => {
   const isSelectedHome = cardSelectedStore((state) => state.isSelectedHome);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1, marginTop: 30 }} >
       <View style={styles.imageContainer}>
         <AntDesign
           name="arrowleft"
@@ -82,41 +110,61 @@ const RoomInformation = () => {
             }
           }}
         />
-        <Image source={{ uri: item.image }} style={styles.image} />
+        <Image source={{ uri: roomData?.image }} style={styles.image} />
       </View>
 
-      {/* <Text>{item.city}</Text> */}
-
-      <View style={{  marginHorizontal: 40 }}>
+      <View style={{ marginHorizontal: 40 }}>
         <View style={{ marginVertical: 10 }}>
-          <Text style={{ color: '#1B1B1F', fontWeight: 700 }}>{item.title}</Text>
-          <Text style={{ color: '#696970' }}>Habitacion {item.room} de {item.sizeM2}m2</Text>
+          <Text style={{ color: '#1B1B1F', fontWeight: 700, fontSize: 16 }}>{roomData?.title}</Text>
+          <Text>Habitacion de {roomData?.sizeM2} m²</Text>
         </View>
 
         <View style={{ marginVertical: 10 }}>
-          <Text style={{ color: '#1B1B1F', fontWeight: 500 }}>{item.city}</Text>
-          <Text style={{ color: '#696970' }}>ID: {item.id}</Text>
+          <Text style={{ color: '#1B1B1F', fontWeight: 700, fontSize: 16 }}>{roomData?.city}</Text>
+          <Text>{roomData?.room_type === 1 ? 'Apartamento' : 'Casa'}</Text>
         </View>
 
         <Text style={{ color: '#1B1B1F', fontWeight: 700, marginVertical: 10, fontSize: 16 }}>Servicios Incluidos</Text>
 
-      </View>
-
-      <View style={{ flexDirection: 'row' }}>
-
-        <View style={{ flex: 1, marginLeft: 50 }}>
-          <Text style={{ color: '#1B1B1F', fontWeight: 500 }}>{item.monthPrice} USD</Text>
-          <Text style={{ color: '#696970' }}>Al mes</Text>
+        <View>
+          {showServices()}
         </View>
 
-        <View style={{ marginBottom: 30, flex: 1, marginRight: 30 }}>
+        <Text style={{
+          color: '#1B1B1F', fontWeight: 700, marginVertical: 10,
+          fontSize: 16, marginTop: 26
+        }}>Restricciones</Text>
+
+        <View>
+
+          <View style={styles.restrictions}>
+            <Text style={styles.restrictionsText}>{petIcon}    Mascotas</Text>
+            {roomData?.isPet ? checkIcon : negativeIcon}
+          </View>
+
+          <View style={styles.restrictions}>
+            <Text style={styles.restrictionsText}>{smokeIcon}    Fumadores</Text>
+            {roomData?.isSmokers ? checkIcon : negativeIcon}
+          </View>
+
+        </View>
+
+      </View>
+
+      <View style={{ flexDirection: 'row', marginVertical: 10, position: 'absolute', bottom: 0, width: '100%' }}>
+        <View style={{ flex: 1, marginLeft: 50 }}>
+          <Text style={{ color: '#1B1B1F', fontWeight: 800, fontSize: 18 }}>{roomData?.monthPrice} USD</Text>
+          <Text>al mes</Text>
+        </View>
+
+        <View style={{ flex: 1, marginRight: 30 }}>
           <Button
             mode='contained'
             icon={() => <MaterialIcons name="person-add-alt" size={24} color="white" />}
             buttonColor='#4754BA'
             style={styles.button}
           >
-            <Text variant='titleLarge' >
+            <Text style={{ color: 'white' }}>
               Contactar
             </Text>
           </Button>

@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: normalize(10, 'height'),
+    marginTop: 30,
     paddingHorizontal: normalize(16, 'width'),
   },
 });
