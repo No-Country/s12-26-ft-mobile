@@ -1,11 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, SafeAreaView, TouchableOpacity, Image } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  SafeAreaView,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import normalize from 'react-native-normalize';
 import { cardSelectedStore, dataSelectedStore } from '../../store';
-import { useFetch } from '../../hooks'
+import { useFetch } from '../../hooks';
 
-import { AntDesign, MaterialIcons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
+import {
+  AntDesign,
+  MaterialIcons,
+  Feather,
+  MaterialCommunityIcons,
+} from '@expo/vector-icons';
 
 const RoomInformation = () => {
   const styles = StyleSheet.create({
@@ -32,18 +43,18 @@ const RoomInformation = () => {
     },
     restrictions: {
       flexDirection: 'row',
-      justifyContent: 'space-between'
+      justifyContent: 'space-between',
     },
     restrictionsText: {
       fontSize: 16,
       fontWeight: 800,
-      marginTop: 10
-    }
+      marginTop: 10,
+    },
   });
 
   const { fetchData } = useFetch();
 
-  const [roomData, setRoomData] = useState()
+  const [roomData, setRoomData] = useState();
 
   useEffect(() => {
     const fetchRoomData = async () => {
@@ -59,32 +70,33 @@ const RoomInformation = () => {
     };
 
     fetchRoomData();
-  }, [item?.roomId])
+  }, [item?.roomId]);
 
   console.log(roomData);
 
   const item = dataSelectedStore((state) => state?.selectedData);
 
-  const checkIcon = <AntDesign name="check" size={24} color="green" />
-  const negativeIcon = <Feather name="x" size={24} color="red" />
+  const checkIcon = <AntDesign name='check' size={24} color='green' />;
+  const negativeIcon = <Feather name='x' size={24} color='red' />;
 
-  const petIcon = <MaterialIcons name="pets" size={24} color="gray" />
-  const smokeIcon = <MaterialCommunityIcons name="cigar" size={24} color="gray" />
-
-  // const icons = () => {
-  //   wifi: <FontAwesome5 name="wifi" size={24} color="black" />,
-  // }
+  const petIcon = <MaterialIcons name='pets' size={24} color='gray' />;
+  const smokeIcon = (
+    <MaterialCommunityIcons name='cigar' size={24} color='gray' />
+  );
 
   const showServices = () => {
     if (roomData)
       for (let service of roomData?.services) {
         return (
           <View>
-            <Text style={{ fontSize: 16, fontWeight: 700 }}> - {service?.name}</Text>
+            <Text style={{ fontSize: 16, fontWeight: 700 }}>
+              {' '}
+              - {service?.name}
+            </Text>
           </View>
-        )
+        );
       }
-  }
+  };
 
   const setIsSelected = cardSelectedStore((state) => state.setIsSelected);
   const isSelected = cardSelectedStore((state) => state.isSelected);
@@ -94,12 +106,12 @@ const RoomInformation = () => {
   const isSelectedHome = cardSelectedStore((state) => state.isSelectedHome);
 
   return (
-    <SafeAreaView style={{ flex: 1, marginTop: 30 }} >
+    <SafeAreaView style={{ flex: 1, marginTop: 30 }}>
       <View style={styles.imageContainer}>
         <AntDesign
-          name="arrowleft"
+          name='arrowleft'
           size={30}
-          color="#4754BA"
+          color='#4754BA'
           style={styles.arrowIcon}
           onPress={() => {
             if (!isSelected) {
@@ -115,61 +127,85 @@ const RoomInformation = () => {
 
       <View style={{ marginHorizontal: 40 }}>
         <View style={{ marginVertical: 10 }}>
-          <Text style={{ color: '#1B1B1F', fontWeight: 700, fontSize: 16 }}>{roomData?.title}</Text>
+          <Text style={{ color: '#1B1B1F', fontWeight: 700, fontSize: 16 }}>
+            {roomData?.title}
+          </Text>
           <Text>Habitacion de {roomData?.sizeM2} m²</Text>
         </View>
 
         <View style={{ marginVertical: 10 }}>
-          <Text style={{ color: '#1B1B1F', fontWeight: 700, fontSize: 16 }}>{roomData?.city}</Text>
+          <Text style={{ color: '#1B1B1F', fontWeight: 700, fontSize: 16 }}>
+            {roomData?.city}
+          </Text>
           <Text>{roomData?.room_type === 1 ? 'Apartamento' : 'Casa'}</Text>
         </View>
 
-        <Text style={{ color: '#1B1B1F', fontWeight: 700, marginVertical: 10, fontSize: 16 }}>Servicios Incluidos</Text>
+        <Text
+          style={{
+            color: '#1B1B1F',
+            fontWeight: 700,
+            marginVertical: 10,
+            fontSize: 16,
+          }}
+        >
+          Servicios Incluidos
+        </Text>
+
+        <View>{showServices()}</View>
+
+        <Text
+          style={{
+            color: '#1B1B1F',
+            fontWeight: 700,
+            marginVertical: 10,
+            fontSize: 16,
+            marginTop: 26,
+          }}
+        >
+          Restricciones
+        </Text>
 
         <View>
-          {showServices()}
-        </View>
-
-        <Text style={{
-          color: '#1B1B1F', fontWeight: 700, marginVertical: 10,
-          fontSize: 16, marginTop: 26
-        }}>Restricciones</Text>
-
-        <View>
-
           <View style={styles.restrictions}>
-            <Text style={styles.restrictionsText}>{petIcon}    Mascotas</Text>
+            <Text style={styles.restrictionsText}>{petIcon} Mascotas</Text>
             {roomData?.isPet ? checkIcon : negativeIcon}
           </View>
 
           <View style={styles.restrictions}>
-            <Text style={styles.restrictionsText}>{smokeIcon}    Fumadores</Text>
+            <Text style={styles.restrictionsText}>{smokeIcon} Fumadores</Text>
             {roomData?.isSmokers ? checkIcon : negativeIcon}
           </View>
-
         </View>
-
       </View>
 
-      <View style={{ flexDirection: 'row', marginVertical: 10, position: 'absolute', bottom: 0, width: '100%' }}>
+      <View
+        style={{
+          flexDirection: 'row',
+          marginVertical: 10,
+          position: 'absolute',
+          bottom: 0,
+          width: '100%',
+        }}
+      >
         <View style={{ flex: 1, marginLeft: 50 }}>
-          <Text style={{ color: '#1B1B1F', fontWeight: 800, fontSize: 18 }}>{roomData?.monthPrice} USD</Text>
+          <Text style={{ color: '#1B1B1F', fontWeight: 800, fontSize: 18 }}>
+            {roomData?.monthPrice} USD
+          </Text>
           <Text>al mes</Text>
         </View>
 
         <View style={{ flex: 1, marginRight: 30 }}>
           <Button
             mode='contained'
-            icon={() => <MaterialIcons name="person-add-alt" size={24} color="white" />}
+            icon={() => (
+              <MaterialIcons name='person-add-alt' size={24} color='white' />
+            )}
             buttonColor='#4754BA'
             style={styles.button}
           >
-            <Text style={{ color: 'white' }}>
-              Contactar
-            </Text>
+            <Text style={{ color: 'white' }}>Contactar</Text>
           </Button>
         </View>
-
       </View>
     </SafeAreaView>
   );
