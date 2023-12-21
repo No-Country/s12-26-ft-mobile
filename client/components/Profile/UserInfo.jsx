@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from 'react-native-paper';
 
-const UserInfo = ({ nombre, edad, biografia, presupuesto, busco, zonasBuscadas }) => {
+const UserInfo = ({ userName, userLocation}) => {
   const styles = StyleSheet.create({
     container: {
       marginLeft: 30,
@@ -22,12 +22,11 @@ const UserInfo = ({ nombre, edad, biografia, presupuesto, busco, zonasBuscadas }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.informationName}>{nombre}</Text>
-      <Text style={styles.information}>Edad: {edad}</Text>
-      <Text style={styles.information}>Biografia: {biografia}</Text>
-      <Text style={styles.information}>Presupuesto: {presupuesto}</Text>
-      <Text style={styles.information}>Busco: {busco}</Text>
-      <Text style={styles.information}>Zonas Buscadas: {zonasBuscadas}</Text>
+      <Text style={styles.informationName}>{userName}</Text>
+      <Text style={styles.information}>Edad: 31</Text>
+      <Text style={styles.information}>Biografia:</Text>
+      {/* <Text style={styles.information}>Edad: {edad}</Text> */}
+      {/* <Text style={styles.information}>Biografia: {biografia}</Text> */}
     </View>
   );
 };

@@ -12,6 +12,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { styles } from './login.styles';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { useFetch } from '../../hooks';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const loginSchema = Yup.object().shape({
   email: Yup.string()
@@ -33,6 +34,9 @@ export default function Login({ navigation }) {
 
     console.log('Estado del Login: ' + res.status);
     if (res.status === 'success') {
+      
+      AsyncStorage.setItem('userData', JSON.stringify(res));
+
       navigation.reset({
         index: 0,
         routes: [{ name: 'Navbar' }],

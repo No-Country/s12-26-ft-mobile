@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: normalize(0, 'height'),
+    marginTop: normalize(10, 'height'),
     paddingHorizontal: normalize(16, 'width'),
   },
 });
