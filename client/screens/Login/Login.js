@@ -4,6 +4,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  SafeAreaView,
 } from 'react-native';
 import { useEffect } from 'react';
 import { Formik } from 'formik';
@@ -55,159 +56,165 @@ export default function Login({ navigation }) {
   }
 
   return (
-    <KeyboardAwareScrollView>
-      <ScrollView
-        contentContainerStyle={{
-          flex: 1,
-          justifyContent: 'space-between',
-          paddingVertical: 10,
-        }}
-      >
-        <Formik
-          initialValues={{ email: '', password: '' }}
-          onSubmit={handleSubmit}
-          validationSchema={loginSchema}
+    <SafeAreaView style={{ flex: 1 }}>
+      <KeyboardAwareScrollView>
+        <ScrollView
+          contentContainerStyle={{
+            flex: 1,
+            justifyContent: 'space-between',
+            paddingVertical: 10,
+          }}
         >
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            errors,
-            setValues,
-            touched,
-            isSubmitting,
-          }) => (
-            <View style={styles.form}>
-              <AppLogoWide size={225} style={styles.logo} />
+          <Formik
+            initialValues={{ email: '', password: '' }}
+            onSubmit={handleSubmit}
+            validationSchema={loginSchema}
+          >
+            {({
+              handleChange,
+              handleBlur,
+              handleSubmit,
+              values,
+              errors,
+              setValues,
+              touched,
+              isSubmitting,
+            }) => (
+              <View style={styles.form}>
+                <AppLogoWide size={225} style={styles.logo} />
 
-              <View
-                style={[
-                  styles.fieldSet,
-                  {
-                    borderColor: errors.email ? 'hsl(0 80% 60%)' : '#00000030',
-                  },
-                ]}
-              >
-                <Text
+                <View
                   style={[
-                    styles.legend,
-                    { color: errors.email ? 'hsl(0 80% 60%)' : '#000' },
+                    styles.fieldSet,
+                    {
+                      borderColor: errors.email
+                        ? 'hsl(0 80% 60%)'
+                        : '#00000030',
+                    },
                   ]}
                 >
-                  Email
-                </Text>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={handleChange('email')}
-                  onBlur={handleBlur('email')}
-                  value={values.email}
-                  placeholder='Introduce tu email'
-                  placeholderTextColor='#00000060'
-                  keyboardType='email-address'
-                />
-                {errors.email ? (
-                  <MaterialCommunityIcons
-                    name='information'
-                    size={24}
-                    color='hsl(0 80% 50%)'
-                    style={styles.errorIcon}
+                  <Text
+                    style={[
+                      styles.legend,
+                      { color: errors.email ? 'hsl(0 80% 60%)' : '#000' },
+                    ]}
+                  >
+                    Email
+                  </Text>
+                  <TextInput
+                    style={styles.input}
+                    onChangeText={handleChange('email')}
+                    onBlur={handleBlur('email')}
+                    value={values.email}
+                    placeholder='Introduce tu email'
+                    placeholderTextColor='#00000060'
+                    keyboardType='email-address'
                   />
-                ) : null}
-              </View>
-              {errors.email && touched.email && (
-                <Text style={styles.errorMessage}>{errors.email}</Text>
-              )}
+                  {errors.email ? (
+                    <MaterialCommunityIcons
+                      name='information'
+                      size={24}
+                      color='hsl(0 80% 50%)'
+                      style={styles.errorIcon}
+                    />
+                  ) : null}
+                </View>
+                {errors.email && touched.email && (
+                  <Text style={styles.errorMessage}>{errors.email}</Text>
+                )}
 
-              <View
-                style={[
-                  styles.fieldSet,
-                  {
-                    borderColor: errors.password
-                      ? 'hsl(0 80% 60%)'
-                      : '#00000030',
-                  },
-                ]}
-              >
-                <Text
+                <View
                   style={[
-                    styles.legend,
-                    { color: errors.password ? 'hsl(0 80% 60%)' : '#000' },
+                    styles.fieldSet,
+                    {
+                      borderColor: errors.password
+                        ? 'hsl(0 80% 60%)'
+                        : '#00000030',
+                    },
                   ]}
                 >
-                  Contraseña
-                </Text>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={handleChange('password')}
-                  onBlur={handleBlur('password')}
-                  value={values.password}
-                  placeholder='Introduce tu contraseña'
-                  placeholderTextColor='#00000060'
-                  secureTextEntry={true}
-                />
-                {errors.password ? (
-                  <MaterialCommunityIcons
-                    name='information'
-                    size={24}
-                    color='hsl(0 80% 50%)'
-                    style={styles.errorIcon}
+                  <Text
+                    style={[
+                      styles.legend,
+                      { color: errors.password ? 'hsl(0 80% 60%)' : '#000' },
+                    ]}
+                  >
+                    Contraseña
+                  </Text>
+                  <TextInput
+                    style={styles.input}
+                    onChangeText={handleChange('password')}
+                    onBlur={handleBlur('password')}
+                    value={values.password}
+                    placeholder='Introduce tu contraseña'
+                    placeholderTextColor='#00000060'
+                    secureTextEntry={true}
                   />
-                ) : null}
+                  {errors.password ? (
+                    <MaterialCommunityIcons
+                      name='information'
+                      size={24}
+                      color='hsl(0 80% 50%)'
+                      style={styles.errorIcon}
+                    />
+                  ) : null}
+                </View>
+                {errors.password && touched.password && (
+                  <Text style={styles.errorMessage}>{errors.password}</Text>
+                )}
+
+                <TouchableOpacity
+                  style={[
+                    styles.submit,
+                    { opacity: errors.password || errors.email ? 0.5 : 1 },
+                  ]}
+                  onPress={() =>
+                    isSubmitting || errors.password || errors.email
+                      ? null
+                      : handleSubmit()
+                  }
+                  disabled={isSubmitting}
+                >
+                  <Text style={styles.submitContent}>
+                    {isSubmitting ? 'Cargando..' : 'Acceder'}
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity>
+                  <Text style={styles.textMainColour}>
+                    Olvidé mi contraseña
+                  </Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() => {
+                    setValues({
+                      email: 'alex@gmail.com',
+                      password: 'admin',
+                    });
+                    setTimeout(() => {
+                      handleSubmit();
+                    }, 200);
+                  }}
+                >
+                  <Text style={styles.textMainColour}>Logueame</Text>
+                </TouchableOpacity>
               </View>
-              {errors.password && touched.password && (
-                <Text style={styles.errorMessage}>{errors.password}</Text>
-              )}
-
-              <TouchableOpacity
-                style={[
-                  styles.submit,
-                  { opacity: errors.password || errors.email ? 0.5 : 1 },
-                ]}
-                onPress={() =>
-                  isSubmitting || errors.password || errors.email
-                    ? null
-                    : handleSubmit()
-                }
-                disabled={isSubmitting}
-              >
-                <Text style={styles.submitContent}>
-                  {isSubmitting ? 'Cargando..' : 'Acceder'}
-                </Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity>
-                <Text style={styles.textMainColour}>Olvidé mi contraseña</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity
-                onPress={() => {
-                  setValues({
-                    email: 'alex@gmail.com',
-                    password: 'admin',
-                  });
-                  setTimeout(() => {
-                    handleSubmit();
-                  }, 200);
-                }}
-              >
-                <Text style={styles.textMainColour}>Logueame</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </Formik>
-        <TouchableOpacity
-          style={styles.outlinedButton}
-          onPress={() =>
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Register' }],
-            })
-          }
-        >
-          <Text style={styles.textMainColour}>Registrarse</Text>
-        </TouchableOpacity>
-      </ScrollView>
-    </KeyboardAwareScrollView>
+            )}
+          </Formik>
+          <TouchableOpacity
+            style={styles.outlinedButton}
+            onPress={() =>
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Register' }],
+              })
+            }
+          >
+            <Text style={styles.textMainColour}>Registrarse</Text>
+          </TouchableOpacity>
+        </ScrollView>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
   );
 }

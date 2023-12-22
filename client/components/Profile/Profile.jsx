@@ -1,6 +1,5 @@
-import React from 'react';
-import { View } from 'react-native';
-
+import { SafeAreaView } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import Buttons from './Buttons';
 import EditProfileButton from './EditProfileButton';
 import Header from './Header';
@@ -13,13 +12,14 @@ const Profile = () => {
   const userData = userStore((state) => state?.user);
 
   return (
-    <View style={{marginTop: 21}}>
+    <SafeAreaView style={{ marginTop: 21, backgroundColor: '#FCF8FD' }}>
       <Header />
       <Title />
       <Buttons />
       <UserInfo {...userData} />
       <EditProfileButton />
-    </View>
+      <StatusBar style='auto' />
+    </SafeAreaView>
   );
 };
 

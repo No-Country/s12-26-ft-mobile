@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "expo-app",
+    "name": "Tu roomie",
     "slug": "expo-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -9,22 +9,29 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#8390FA"
     },
     "assetBundlePatterns": [
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "roomieapp.s12"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#FFF"
+      },
+      "package": "roomieapp.s12"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "86391799-d4ea-4ac8-b68e-9bf6527bab17"
+      }
     }
   }
 }

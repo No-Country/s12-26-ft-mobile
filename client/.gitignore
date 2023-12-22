@@ -38,3 +38,6 @@ yarn-error.*
 package-lock.json
 .env
 yarn.lock
+
+# android
+android/

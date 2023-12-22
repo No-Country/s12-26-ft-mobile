@@ -1,4 +1,5 @@
 import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { useNavigation } from '@react-navigation/native';
 import Header from '../../components/Profile/Header';
 import { ButtonsOptionsView } from './components';
@@ -42,6 +43,7 @@ const SettingsScreen = () => {
           <Text style={styles.buttonText}>Cerrar sesión</Text>
         </TouchableOpacity>
       </View>
+      <StatusBar style='auto' />
     </SafeAreaView>
   );
 };

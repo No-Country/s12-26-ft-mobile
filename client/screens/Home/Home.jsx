@@ -64,7 +64,7 @@ export default function Home() {
             )}
           </ScrollView>
           <MapButton />
-          <StatusBar style='light' />
+          <StatusBar style='auto' />
         </View>
       )}
     </SafeAreaView>
